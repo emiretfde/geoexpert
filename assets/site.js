@@ -48,6 +48,22 @@
     });
   }
 
+  /* ---------- hero: naslov uvijek staje na prvi ekran ---------- */
+  var hero = document.querySelector(".hero"), heroH1 = hero && hero.querySelector("h1");
+  var uklopi = function () {
+    if (!heroH1) return;
+    heroH1.style.fontSize = "";
+    var fs = parseFloat(getComputedStyle(heroH1).fontSize), min = window.innerWidth < 600 ? 26 : 32, n = 0;
+    var dno = function () { var d = hero.querySelector(".hero-dole"); return d.getBoundingClientRect().bottom + window.scrollY; };
+    var granica = function () { return Math.max(window.innerHeight, 520) - 12; };
+    while (dno() > granica() && fs > min && n++ < 40) { fs -= 2; heroH1.style.fontSize = fs + "px"; }
+  };
+  if (heroH1) {
+    uklopi();
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(uklopi);
+    var tU; window.addEventListener("resize", function () { clearTimeout(tU); tU = setTimeout(uklopi, 120); });
+  }
+
   /* ---------- hero: 3D oblak tačaka terena ---------- */
   var platno = document.querySelector("canvas.oblak");
   var pokreniOblak = function () {
