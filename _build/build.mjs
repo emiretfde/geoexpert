@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 import { firma, me, en } from "./content.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
-const SITE_URL = process.env.SITE_URL || "https://geoexpert.pages.dev";
+const SITE_URL = process.env.SITE_URL || "https://geoexpert-aes.pages.dev";
 const PREVIEW = process.argv.includes("--preview"); // izlaz za pregled u Claude artifactu
 const OUT = PREVIEW ? join(ROOT, "_preview") : ROOT;
 
