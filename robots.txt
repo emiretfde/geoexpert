@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+Disallow: /_build/
+Sitemap: https://geoexpert.pages.dev/sitemap.xml
