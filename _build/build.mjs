@@ -39,9 +39,9 @@ const pts = (p) => p.map((x) => x.join(",")).join(" ");
 
 function planSvg(L) {
   const P = L.plan;
-  const W = 1000, H = 680;
+  const W = 1000, H = 600;
   let s = `<svg class="plan" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(P.glava)}: ${esc(P.dioba)}">`;
-  s += `<defs><pattern id="srafura" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="7" style="stroke:var(--tus);stroke-width:1"/></pattern></defs>`;
+  s += `<defs><pattern id="srafura" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="7" style="stroke:rgba(236,232,223,.35);stroke-width:1"/></pattern></defs>`;
   // mreža krstova i oznake koordinata
   s += `<g class="mreza-krst">`;
   for (let x = 100; x < W; x += 100) for (let y = 100; y < H; y += 100)
@@ -77,12 +77,15 @@ function planSvg(L) {
   return s;
 }
 
+
 /* ---------- dijelovi ---------- */
+const strelica = `<svg viewBox="0 0 14 14" fill="none" stroke-width="1.4" aria-hidden="true"><path d="M2 7h10M8 3l4 4-4 4"/></svg>`;
+
 function head(L, kljuc) {
   const [naslov, opis] = L.meta[kljuc];
   const p = prefiks(L);
-  const url = SITE_URL + "/" + putanja(L, kljuc).replace(/index\.html$/, "");
-  const alt = SITE_URL + "/" + putanja(drugi(L), kljuc).replace(/index\.html$/, "");
+  const url = SITE_URL + "/" + putanja(L, kljuc).replace(/index\.html$/, "").replace(/\.html$/, "");
+  const alt = SITE_URL + "/" + putanja(drugi(L), kljuc).replace(/index\.html$/, "").replace(/\.html$/, "");
   const meUrl = L.lang === "me" ? url : alt, enUrl = L.lang === "en" ? url : alt;
   return `<title>${esc(naslov)}</title>
 <meta name="description" content="${esc(opis)}">
@@ -93,10 +96,11 @@ function head(L, kljuc) {
 <meta property="og:description" content="${esc(opis)}">
 <meta property="og:type" content="website">
 <meta property="og:url" content="${url}">
-<meta name="theme-color" content="#1C2B3A">
+<meta name="theme-color" content="#091117">
 <link rel="icon" href="${p}assets/favicon.svg" type="image/svg+xml">
 ${PREVIEW ? `<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,100..900;1,62..125,100..900&display=swap">` : `<link rel="preload" href="${p}assets/fonts/archivo-latin-wdth-normal.woff2" as="font" type="font/woff2" crossorigin>`}
 <link rel="stylesheet" href="${p}assets/site.css">
+<script>document.documentElement.classList.add("js")</script>
 <script type="application/ld+json">${JSON.stringify({
     "@context": "https://schema.org", "@type": "ProfessionalService", name: "GeoExpert",
     description: L.meta.pocetna[1], url: SITE_URL, telephone: firma.tel1href, email: firma.email,
@@ -126,20 +130,23 @@ ${logo(L)}
 function podnozje(L) {
   const F = L.footer;
   return `<footer class="podnozje"><div class="omot">
-<div>${logo(L)}<p>${F.opis}</p></div>
+<div class="kolone">
+<div>${logo(L)}<p style="margin-top:18px">${F.opis}</p></div>
 <div><h4>${F.stranice}</h4><a href="${L.stranice.pocetna}">GeoExpert</a><a href="${L.stranice.usluge}">${L.nav.usluge}</a><a href="${L.stranice.onama}">${L.nav.onama}</a><a href="${L.stranice.kontakt}">${L.nav.kontakt}</a></div>
 <div><h4>${F.kontakt}</h4><a href="${firma.mapa}" target="_blank" rel="noopener">${L.lang === "en" ? firma.adresaEn : firma.adresa}</a><a href="mailto:${firma.email}">${firma.email}</a><a class="broj" href="tel:${firma.tel1href}">${firma.tel1}</a><a class="broj" href="tel:${firma.tel2href}">${firma.tel2}</a></div>
 <div><h4>${F.radno}</h4><span>${F.radno1}</span><br><span>${F.radno2}</span></div>
+</div>
+<div class="veliki-znak" aria-hidden="true">Geo<b>Expert</b></div>
 <div class="dno"><span>© 2026 GeoExpert</span><span>${L.lang === "en" ? "Podgorica, Montenegro" : "Podgorica, Crna Gora"}</span></div>
 </div></footer>`;
 }
 
 function kontaktBlok(L) {
   const C = L.cta;
-  return `<section class="tamno sekcija" aria-labelledby="cta-n"><canvas class="izohipse" aria-hidden="true"></canvas><div class="omot kontakt-mreza">
-<div><h2 id="cta-n">${C.naslov}</h2><p style="margin-top:20px">${C.tekst}</p>
+  return `<section class="poziv sekcija" aria-labelledby="cta-n"><canvas class="izohipse" aria-hidden="true"></canvas><div class="omot kontakt-mreza">
+<div><h2 id="cta-n">${C.naslov}</h2><p class="uvod" style="margin-top:24px">${C.tekst}</p>
 <div class="telefoni"><a href="tel:${firma.tel1href}">${firma.tel1}</a><a href="tel:${firma.tel2href}">${firma.tel2}</a></div></div>
-<div style="display:grid;gap:28px">
+<div style="display:grid;gap:32px">
 <dl class="podaci">
 <div><dt>${C.email}</dt><dd><a href="mailto:${firma.email}">${firma.email}</a></dd></div>
 <div><dt>${C.adresa}</dt><dd>${L.lang === "en" ? firma.adresaEn : firma.adresa}</dd></div>
@@ -149,14 +156,13 @@ function kontaktBlok(L) {
 </div></div></section>`;
 }
 
-function strana(L, kljuc, telo) {
+function strana(L, kljuc, telo, skripte = "") {
   const p = prefiks(L);
   const sadrzaj = `${zaglavlje(L, kljuc)}
 <main id="sadrzaj">${telo}</main>
 ${podnozje(L)}
-<script src="${p}assets/site.js" defer></script>`;
+${skripte}<script src="${p}assets/site.js" defer></script>`;
   if (PREVIEW && L.lang === "me" && kljuc === "pocetna") {
-    // artifact omotava stranicu sam; ovdje samo head-sadržaj + tijelo
     return `${head(L, kljuc)}\n<script>document.documentElement.lang="${L.htmlLang}"</script>\n${sadrzaj}`;
   }
   return `<!doctype html>
@@ -173,52 +179,77 @@ ${sadrzaj}
 `;
 }
 
-/* ---------- stranice ---------- */
-function pocetna(L) {
-  const H = L.hero, P = L.plan, S = L.stav;
-  const indeks = L.grupe.map((g) => `<div class="grupa"><h3>${g.naziv}</h3><ul>${g.usluge.map((k) => {
-    const u = L.usluge[k];
-    return `<li><a href="${L.stranice.usluge}#${k}"><strong>${u.naziv}</strong><span>${u.kratko}</span><em>${L.detaljnije}</em></a></li>`;
-  }).join("")}</ul></div>`).join("");
-  return `
-<section class="hero"><div class="omot">
-<div class="hero-tekst">
-<h1>${H.naslov}</h1>
-<div class="desno"><p class="uvod">${H.uvod}</p>
-<div class="akcije"><a class="dugme" href="${L.stranice.kontakt}">${H.ponuda}</a><a class="veza broj" href="tel:${firma.tel1href}">${H.pozovite} ${firma.tel1}</a></div></div>
-</div>
-<figure class="list-plana" style="margin-inline:0;margin-bottom:0"><div class="unutra">
+const vlak = (L, klasa = "") => `<ol class="vlak ${klasa}">${L.proces.koraci.map(([a, b], i) => `<li><span class="st">${L.proces.st} ${i + 1}</span><h3>${a}</h3><p>${b}</p></li>`).join("")}</ol>`;
+const principi = (L) => `<dl class="principi">${L.stav.principi.map(([a, b]) => `<div><dt>${a}</dt><dd>${b}</dd></div>`).join("")}</dl>`;
+const klijenti = (L) => `<section class="sekcija" aria-labelledby="kl-n"><div class="omot klijenti-blok"><h2 id="kl-n">${L.klijentiNaslov}</h2><ul class="klijenti">${firma.klijenti.map((k) => `<li>${k}</li>`).join("")}</ul></div></section>`;
+
+function planBlok(L) {
+  const P = L.plan;
+  return `<figure class="list-plana"><div class="unutra">
 <span class="uputa">${P.uputa}</span>
 ${planSvg(L)}
+</div>
 <div class="naslovni-blok">
-<div class="glava">${P.glava}<span>${P.glavaDesno}</span></div>
-<div>${P.parcela}</div><div class="vrijednost" id="parcela-info" aria-live="polite">${P.dioba}</div>
-<div>${P.kursor}</div><div class="vrijednost"><span id="kursor-y">Y 6 603 456,40</span><br><span id="kursor-x">X 4 700 271,44</span></div>
+<div>${P.parcela}</div><div class="vrijednost siroko" id="parcela-info" aria-live="polite">${P.dioba}</div>
+<div>${P.kursor}</div><div class="vrijednost"><span id="kursor-y">Y 6 603 456,40</span> &nbsp; <span id="kursor-x">X 4 700 271,44</span></div>
 <div>${P.razmjera}</div><div class="vrijednost">${P.razmjeraV}</div>
 <div>${P.sistem}</div><div class="vrijednost">${P.sistemV}</div>
 <div>${P.izradio}</div><div class="vrijednost">${P.izradioV}</div>
-</div></div></figure>
+</div></figure>`;
+}
+
+/* ---------- stranice ---------- */
+function pocetna(L) {
+  const H = L.hero, S = L.stav;
+  const indeks = L.grupe.map((g) => `<div class="grupa"><h3>${g.naziv}</h3><ul>${g.usluge.map((k) => {
+    const u = L.usluge[k];
+    return `<li><a href="${L.stranice.usluge}#${k}"><strong>${u.naziv}</strong><span>${u.kratko}</span><i>${strelica}</i></a></li>`;
+  }).join("")}</ul></div>`).join("");
+  return `
+<section class="hero" aria-labelledby="hero-n">
+<canvas class="oblak" aria-hidden="true"></canvas>
+<div class="omot">
+<div class="hero-gore">
+<p class="oznaka">${H.mjesto}</p>
+<dl class="ocitavanje" aria-hidden="true">
+<dt>${H.tacka}</dt><dd id="o-t">0427</dd>
+<dt>Y</dt><dd id="o-y">6 603 456,40</dd>
+<dt>X</dt><dd id="o-x">4 700 271,44</dd>
+<dt>${H.visina}</dt><dd id="o-h" class="hv">48,62 m</dd>
+</dl>
+</div>
+<div class="hero-dole">
+<h1 id="hero-n">${H.naslov}</h1>
+<div class="desno"><p class="uvod">${H.uvod}</p>
+<div class="akcije"><a class="dugme" href="${L.stranice.kontakt}">${H.ponuda}</a><a class="veza broj" href="tel:${firma.tel1href}">${firma.tel1}</a></div></div>
+</div>
+</div>
+<span class="potpis">${H.ilustracija}</span>
+</section>
+
+<section class="sekcija" aria-labelledby="stav-n"><div class="omot">
+<div class="izjava-blok">
+<div class="lijevo"><h2 id="stav-n" style="font-size:var(--t0);color:var(--pijesak);font-weight:420;font-stretch:112%;letter-spacing:0;max-width:24ch">${S.naslov}</h2></div>
+<div style="display:grid;gap:36px;align-content:start"><p class="izjava">${S.izjava}</p><p><a class="veza" href="${L.stranice.onama}">${S.vise}</a></p></div>
+</div>
+<div class="brojke">${L.brojke.map(([b, t]) => `<div><b>${b}</b><span>${t}</span></div>`).join("")}</div>
 </div></section>
 
-<section class="sekcija" aria-labelledby="stav-n"><div class="omot stav">
-<div style="display:grid;gap:28px;align-content:start"><h2 id="stav-n">${S.naslov}</h2><p class="izjava">${S.izjava}</p><p><a class="veza" href="${L.stranice.onama}">${S.vise}</a></p></div>
-<dl class="principi">${S.principi.map(([a, b]) => `<div><dt>${a}</dt><dd>${b}</dd></div>`).join("")}</dl>
-</div></section>
-
-<section class="sekcija" aria-labelledby="usl-n"><div class="omot">
+<section class="sekcija dubina" aria-labelledby="usl-n"><div class="omot">
 <div class="glava-sekcije"><h2 id="usl-n">${L.uslugeNaslov}</h2><p>${L.uslugeUvod}</p></div>
 <div class="indeks">${indeks}</div>
 </div></section>
 
-<section class="sekcija" aria-labelledby="pro-n"><div class="omot">
-<div class="glava-sekcije"><h2 id="pro-n">${L.proces.naslov}</h2><p>${L.proces.uvod}</p></div>
-<ol class="vlak">${L.proces.koraci.map(([a, b], i) => `<li><span class="st">${L.proces.st} ${i + 1}</span><h3>${a}</h3><p>${b}</p></li>`).join("")}</ol>
+<section class="sekcija" aria-labelledby="ter-n"><div class="omot">
+<div class="glava-sekcije"><h2 id="ter-n">${L.teren.naslov}</h2><p>${L.teren.uvod}</p></div>
+<div class="teren">${vlak(L)}${planBlok(L)}</div>
 </div></section>
 
-<section class="sekcija" aria-labelledby="kl-n"><div class="omot" style="display:grid;gap:28px">
-<h2 id="kl-n" style="font-size:var(--t1);color:var(--tiho);font-weight:500">${L.klijentiNaslov}</h2>
-<ul class="klijenti">${firma.klijenti.map((k) => `<li>${k}</li>`).join("")}</ul>
+<section class="sekcija dubina" aria-labelledby="pr-n"><div class="omot dvije">
+<h2 id="pr-n">${L.lang === "en" ? "How we work with clients" : "Kako radimo sa klijentima"}</h2>
+${principi(L)}
 </div></section>
+${klijenti(L)}
 ${kontaktBlok(L)}`;
 }
 
@@ -230,38 +261,38 @@ function usluge(L) {
 <div><h3>${L.kada}</h3><ul>${u.kada.map((x) => `<li>${x}</li>`).join("")}</ul></div>
 <div><h3>${L.dobijate}</h3><ul>${u.dobijate.map((x) => `<li>${x}</li>`).join("")}</ul></div></article>`;
   }).join("");
-  return `<section class="naslov-strane"><div class="omot"><h1>${L.uslugeNaslov}</h1><p class="uvod">${L.uslugeUvod}</p></div></section>
-<section style="padding-bottom:clamp(64px,9vw,128px)"><div class="omot sadrzaj-usluga"><nav aria-label="${L.uslugeNaslov}">${nav}</nav><div>${sve}</div></div></section>
+  return `<section class="naslov-strane"><div class="omot"><p class="oznaka">GeoExpert</p><h1>${L.uslugeNaslov}</h1><p class="uvod">${L.uslugeUvod}</p></div></section>
+<section class="sekcija" style="padding-top:clamp(56px,7vw,96px)"><div class="omot sadrzaj-usluga"><nav aria-label="${L.uslugeNaslov}">${nav}</nav><div>${sve}</div></div></section>
 ${kontaktBlok(L)}`;
 }
 
 function onama(L) {
-  const O = L.onama, S = L.stav;
-  return `<section class="naslov-strane"><div class="omot"><h1>${O.naslov}</h1><p class="uvod">${O.uvod}</p></div></section>
+  const O = L.onama;
+  return `<section class="naslov-strane"><div class="omot"><p class="oznaka">${L.nav.onama}</p><h1>${O.naslov}</h1><p class="uvod">${O.uvod}</p></div></section>
 <section class="sekcija"><div class="omot dvije">
 <div class="kol">${O.tekst.map((t) => `<p>${t}</p>`).join("")}</div>
-<dl class="principi">${S.principi.map(([a, b]) => `<div><dt>${a}</dt><dd>${b}</dd></div>`).join("")}</dl>
-</div></section>
-<section class="sekcija"><div class="omot dvije">
+${principi(L)}
+</div>
+<div class="omot"><div class="brojke">${L.brojke.map(([b, t]) => `<div><b>${b}</b><span>${t}</span></div>`).join("")}</div></div></section>
+<section class="sekcija dubina"><div class="omot dvije">
 <h2>${O.zaKoga}</h2>
 <ul class="za-koga">${O.zaKogaLista.map((x) => `<li>${x}</li>`).join("")}</ul>
 </div></section>
 <section class="sekcija"><div class="omot"><div class="glava-sekcije"><h2>${L.proces.naslov}</h2><p>${L.proces.uvod}</p></div>
-<ol class="vlak">${L.proces.koraci.map(([a, b], i) => `<li><span class="st">${L.proces.st} ${i + 1}</span><h3>${a}</h3><p>${b}</p></li>`).join("")}</ol></div></section>
-<section class="sekcija"><div class="omot" style="display:grid;gap:28px"><h2 style="font-size:var(--t1);color:var(--tiho);font-weight:500">${L.klijentiNaslov}</h2>
-<ul class="klijenti">${firma.klijenti.map((k) => `<li>${k}</li>`).join("")}</ul></div></section>
+${vlak(L, "vodoravno")}</div></section>
+${klijenti(L)}
 ${kontaktBlok(L)}`;
 }
 
 function kontakt(L) {
   const K = L.kontakt, F = K.forma, C = L.cta;
   const opcije = L.grupe.flatMap((g) => g.usluge).map((k) => `<option>${L.usluge[k].naziv}</option>`).join("");
-  return `<section class="naslov-strane"><div class="omot"><h1>${K.naslov}</h1><p class="uvod">${K.uvod}</p></div></section>
-<section style="padding-bottom:clamp(64px,9vw,128px)"><div class="omot dvije">
+  return `<section class="naslov-strane"><div class="omot"><p class="oznaka">${L.nav.kontakt}</p><h1>${K.naslov}</h1><p class="uvod">${K.uvod}</p></div></section>
+<section class="sekcija" style="padding-top:clamp(56px,7vw,96px)"><div class="omot dvije">
 <form class="forma" novalidate>
 <div class="polje"><label for="f-ime">${F.ime}</label><input id="f-ime" name="ime" autocomplete="name" required></div>
 <div class="polje"><label for="f-email">${F.email}</label><input id="f-email" name="email" type="email" autocomplete="email" required></div>
-<div class="polje"><label for="f-tel">${F.telefon} <small>${F.neobavezno}</small></label><input id="f-tel" name="telefon" type="tel" autocomplete="tel"></div>
+<div class="polje"><label for="f-tel">${F.telefon} ${F.neobavezno}</label><input id="f-tel" name="telefon" type="tel" autocomplete="tel"></div>
 <div class="polje"><label for="f-usluga">${F.usluga}</label><select id="f-usluga" name="usluga"><option value="">${F.izaberi}</option>${opcije}<option>${F.drugo}</option></select></div>
 <div class="polje puno"><label for="f-poruka">${F.poruka}</label><textarea id="f-poruka" name="poruka" placeholder="${esc(F.porukaPh)}" required></textarea></div>
 <div class="zamka" aria-hidden="true"><label for="f-web">Web</label><input id="f-web" name="web" tabindex="-1" autocomplete="off"></div>
@@ -269,8 +300,8 @@ function kontakt(L) {
 <p class="status puno" role="status" aria-live="polite"></p>
 </form>
 <div class="kol">
-<div class="telefoni" style="margin-top:0"><a href="tel:${firma.tel1href}" style="color:var(--tus)">${firma.tel1}</a><a href="tel:${firma.tel2href}" style="color:var(--tus)">${firma.tel2}</a></div>
-<dl class="principi">
+<div class="telefoni" style="margin-top:0"><a href="tel:${firma.tel1href}">${firma.tel1}</a><a href="tel:${firma.tel2href}">${firma.tel2}</a></div>
+<dl class="podaci">
 <div><dt>${C.email}</dt><dd><a href="mailto:${firma.email}">${firma.email}</a></dd></div>
 <div><dt>${C.adresa}</dt><dd>${L.lang === "en" ? firma.adresaEn : firma.adresa}<br><a class="veza" href="${firma.mapa}" target="_blank" rel="noopener">${C.mapa}</a></dd></div>
 <div><dt>${C.radno}</dt><dd>${C.radnoV}</dd></div>
@@ -280,10 +311,11 @@ function kontakt(L) {
 }
 
 /* ---------- upis ---------- */
+const THREE = PREVIEW ? `<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>\n` : null;
 const upisi = (rel, html) => { const f = join(OUT, rel); mkdirSync(dirname(f), { recursive: true }); writeFileSync(f, html); };
 for (const L of [me, en]) {
   const d = L.lang === "en" ? "en/" : "";
-  upisi(d + L.stranice.pocetna, strana(L, "pocetna", pocetna(L)));
+  upisi(d + L.stranice.pocetna, strana(L, "pocetna", pocetna(L), THREE || `<script src="${prefiks(L)}assets/vendor/three.min.js" defer></script>\n`));
   upisi(d + L.stranice.usluge, strana(L, "usluge", usluge(L)));
   upisi(d + L.stranice.onama, strana(L, "onama", onama(L)));
   upisi(d + L.stranice.kontakt, strana(L, "kontakt", kontakt(L)));
