@@ -19,8 +19,9 @@ const prefiks = (L) => (L.dir ? "../" : "");
 const putanja = (L, kljuc) => L.dir + L.stranice[kljuc];
 const cist = (u) => u.replace(/index\.html$/, "").replace(/\.html$/, "");
 
-const znak = `<svg viewBox="0 0 26 26" aria-hidden="true"><path d="M13 3.2 23.6 21.6H2.4Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="13" cy="15.4" r="2.5" fill="var(--novo)"/></svg>`;
-const logo = (L) => `<a class="znak" href="${L.stranice.pocetna}" aria-label="GeoExpert">${znak}<span>Geo<b>Expert</b></span></a>`;
+const logoSvg = readFileSync(join(ROOT, "assets", "logo", "geoexpert-logo-bijeli.svg"), "utf8")
+  .replace(/<title>.*?<\/title>/, "").replace(' role="img" aria-label="GeoExpert"', ' aria-hidden="true" focusable="false"').trim();
+const logo = (L) => `<a class="znak" href="${L.stranice.pocetna}" aria-label="GeoExpert">${logoSvg}</a>`;
 
 /* ---------- katastarski plan (SVG) ---------- */
 const parcele = [
@@ -143,7 +144,7 @@ function podnozje(L) {
 <div><h4>${F.kontakt}</h4><a href="${firma.mapa}" target="_blank" rel="noopener">${L.adresa}</a><a href="mailto:${firma.email}">${firma.email}</a><a class="broj" href="tel:${firma.tel1href}">${firma.tel1}</a><a class="broj" href="tel:${firma.tel2href}">${firma.tel2}</a></div>
 <div><h4>${F.radno}</h4><span>${F.radno1}</span><br><span>${F.radno2}</span></div>
 </div>
-<div class="veliki-znak" aria-hidden="true">Geo<b>Expert</b></div>
+<div class="veliki-znak" aria-hidden="true">${logoSvg}</div>
 <div class="dno"><span>© 2026 GeoExpert</span><span>${L.drzava}</span></div>
 </div></footer>`;
 }
