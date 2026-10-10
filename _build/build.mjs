@@ -1,5 +1,6 @@
 // Generiše statički sajt (ME u korijenu, EN u /en). Pokretanje: node _build/build.mjs
-import { writeFileSync, mkdirSync } from "node:fs";
+import { writeFileSync, mkdirSync, readFileSync } from "node:fs";
+import { createHash } from "node:crypto";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { firma, me, en } from "./content.mjs";
@@ -9,6 +10,8 @@ const SITE_URL = process.env.SITE_URL || "https://geoexpert-aes.pages.dev";
 const PREVIEW = process.argv.includes("--preview"); // izlaz za pregled u Claude artifactu
 const OUT = PREVIEW ? join(ROOT, "_preview") : ROOT;
 
+const ver = (f) => createHash("sha1").update(readFileSync(join(ROOT, "assets", f))).digest("hex").slice(0, 8);
+const V = { css: ver("site.css"), js: ver("site.js") };
 const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 const jezici = { me, en };
 const prefiks = (L) => (L.lang === "en" ? "../" : "");
@@ -99,7 +102,7 @@ function head(L, kljuc) {
 <meta name="theme-color" content="#091117">
 <link rel="icon" href="${p}assets/favicon.svg" type="image/svg+xml">
 ${PREVIEW ? `<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,100..900;1,62..125,100..900&display=swap">` : `<link rel="preload" href="${p}assets/fonts/archivo-latin-wdth-normal.woff2" as="font" type="font/woff2" crossorigin>`}
-<link rel="stylesheet" href="${p}assets/site.css">
+<link rel="stylesheet" href="${p}assets/site.css?v=${V.css}">
 <script>document.documentElement.classList.add("js")</script>
 <script type="application/ld+json">${JSON.stringify({
     "@context": "https://schema.org", "@type": "ProfessionalService", name: "GeoExpert",
@@ -161,7 +164,7 @@ function strana(L, kljuc, telo, skripte = "") {
   const sadrzaj = `${zaglavlje(L, kljuc)}
 <main id="sadrzaj">${telo}</main>
 ${podnozje(L)}
-${skripte}<script src="${p}assets/site.js" defer></script>`;
+${skripte}<script src="${p}assets/site.js?v=${V.js}" defer></script>`;
   if (PREVIEW && L.lang === "me" && kljuc === "pocetna") {
     return `${head(L, kljuc)}\n<script>document.documentElement.lang="${L.htmlLang}"</script>\n${sadrzaj}`;
   }
