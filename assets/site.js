@@ -1,12 +1,16 @@
 (function () {
   "use strict";
   var doc = document.documentElement;
-  var lang = doc.lang === "en" ? "en" : "me";
+  var lang = (doc.lang || "me").slice(0, 2); if (lang === "sr") lang = "me";
   var redukovano = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  var T = {
+  var SVI = {
     me: { dioba: "1853 dijeli se na 1853/1 i 1853/2", saljem: "Šaljem…", poslato: "Hvala. Poruka je poslata, javićemo vam se u toku radnog dana.", greska: "Poruka nije poslata. Pišite direktno na geoexpertpg@gmail.com ili pozovite +382 68 007 108.", fali: "Popunite ime, e-poštu i poruku." },
-    en: { dioba: "1853 is split into 1853/1 and 1853/2", saljem: "Sending…", poslato: "Thank you. Your message was sent and we will reply within one working day.", greska: "The message was not sent. Write to geoexpertpg@gmail.com or call +382 68 007 108.", fali: "Fill in your name, email and message." }
-  }[lang];
+    en: { dioba: "1853 is split into 1853/1 and 1853/2", saljem: "Sending…", poslato: "Thank you. Your message was sent and we will reply within one working day.", greska: "The message was not sent. Write to geoexpertpg@gmail.com or call +382 68 007 108.", fali: "Fill in your name, email and message." },
+    de: { dioba: "1853 wird in 1853/1 und 1853/2 geteilt", saljem: "Wird gesendet…", poslato: "Danke. Ihre Nachricht wurde gesendet, wir melden uns innerhalb eines Werktags.", greska: "Die Nachricht wurde nicht gesendet. Schreiben Sie an geoexpertpg@gmail.com oder rufen Sie +382 68 007 108 an.", fali: "Bitte Name, E-Mail und Nachricht ausfüllen." },
+    tr: { dioba: "1853, 1853/1 ve 1853/2 olarak ifraz ediliyor", saljem: "Gönderiliyor…", poslato: "Teşekkürler. Mesajınız gönderildi, bir iş günü içinde dönüş yapacağız.", greska: "Mesaj gönderilemedi. geoexpertpg@gmail.com adresine yazın veya +382 68 007 108 numarasını arayın.", fali: "Adınızı, e-postanızı ve mesajınızı yazın." },
+    ru: { dioba: "1853 делится на 1853/1 и 1853/2", saljem: "Отправка…", poslato: "Спасибо. Сообщение отправлено, мы ответим в течение рабочего дня.", greska: "Сообщение не отправлено. Напишите на geoexpertpg@gmail.com или позвоните +382 68 007 108.", fali: "Заполните имя, эл. почту и сообщение." }
+  };
+  var T = SVI[lang] || SVI.en;
   var fmt = function (n, dec) {
     var s = n.toFixed(dec === undefined ? 2 : dec).split(".");
     var c = s[0].replace(/\B(?=(\d{3})+(?!\d))/g, " ");

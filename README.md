@@ -5,14 +5,14 @@ Statički, dvojezični sajt (crnogorski + engleski) za geodetsku firmu GeoExpert
 ## Struktura
 
 - `index.html`, `usluge.html`, `o-nama.html`, `kontakt.html`: crnogorska verzija
-- `en/`: engleska verzija
+- `en/`, `de/`, `tr/`, `ru/`: engleska, njemačka, turska i ruska verzija
 - `assets/`: CSS, JS, favicon i fontovi (Archivo, OFL licenca, hostovan lokalno)
 - `functions/api/contact.js`: Cloudflare Pages funkcija za kontakt formu
 - `_build/`: izvor sadržaja (`content.mjs`) i generator stranica (`build.mjs`)
 
 ## Izmjena teksta
 
-Sav tekst je u `_build/content.mjs`. Nakon izmjene:
+Tekst je u `_build/content.mjs` (ME, EN) i `_build/prevodi.mjs` (DE, TR, RU). Nakon izmjene:
 
 ```
 SITE_URL=https://vas-domen.me node _build/build.mjs

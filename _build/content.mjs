@@ -1,4 +1,4 @@
-// Sav tekst sajta na jednom mjestu. ME = crnogorski (ijekavica), EN = engleski.
+// Sav tekst sajta. ME = crnogorski (ijekavica), EN = engleski; DE/TR/RU su u prevodi.mjs.
 export const firma = {
   ime: "GeoExpert",
   adresa: "13. jul br. 9, 81000 Podgorica",
@@ -11,7 +11,8 @@ export const firma = {
 };
 
 export const me = {
-  lang: "me", htmlLang: "sr-Latn-ME",
+  lang: "me", htmlLang: "sr-Latn-ME", kod: "ME", ime: "Crnogorski", dir: "",
+  adresa: "13. jul br. 9, 81000 Podgorica", drzava: "Podgorica, Crna Gora", navLabel: "Glavna", jezikLabel: "Jezik", principiNaslov: "Kako radimo sa klijentima",
   stranice: { pocetna: "index.html", usluge: "usluge.html", onama: "o-nama.html", kontakt: "kontakt.html" },
   nav: { usluge: "Usluge", onama: "O nama", kontakt: "Kontakt", meni: "Meni", preskoci: "Pređi na sadržaj", drugiJezik: "English" },
   meta: {
@@ -138,7 +139,8 @@ export const me = {
 };
 
 export const en = {
-  lang: "en", htmlLang: "en",
+  lang: "en", htmlLang: "en", kod: "EN", ime: "English", dir: "en/",
+  adresa: "13. jul 9, 81000 Podgorica, Montenegro", drzava: "Podgorica, Montenegro", navLabel: "Main", jezikLabel: "Language", principiNaslov: "How we work with clients",
   stranice: { pocetna: "index.html", usluge: "services.html", onama: "about.html", kontakt: "contact.html" },
   nav: { usluge: "Services", onama: "About", kontakt: "Contact", meni: "Menu", preskoci: "Skip to content", drugiJezik: "Crnogorski" },
   meta: {

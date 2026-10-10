@@ -4,6 +4,8 @@ import { createHash } from "node:crypto";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { firma, me, en } from "./content.mjs";
+import { de, tr, ru } from "./prevodi.mjs";
+const JEZICI = [me, en, de, tr, ru];
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const SITE_URL = process.env.SITE_URL || "https://geoexpert-aes.pages.dev";
@@ -13,10 +15,9 @@ const OUT = PREVIEW ? join(ROOT, "_preview") : ROOT;
 const ver = (f) => createHash("sha1").update(readFileSync(join(ROOT, "assets", f))).digest("hex").slice(0, 8);
 const V = { css: ver("site.css"), js: ver("site.js") };
 const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-const jezici = { me, en };
-const prefiks = (L) => (L.lang === "en" ? "../" : "");
-const putanja = (L, kljuc) => (L.lang === "en" ? "en/" : "") + L.stranice[kljuc];
-const drugi = (L) => (L.lang === "en" ? me : en);
+const prefiks = (L) => (L.dir ? "../" : "");
+const putanja = (L, kljuc) => L.dir + L.stranice[kljuc];
+const cist = (u) => u.replace(/index\.html$/, "").replace(/\.html$/, "");
 
 const znak = `<svg viewBox="0 0 26 26" aria-hidden="true"><path d="M13 3.2 23.6 21.6H2.4Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="13" cy="15.4" r="2.5" fill="var(--novo)"/></svg>`;
 const logo = (L) => `<a class="znak" href="${L.stranice.pocetna}" aria-label="GeoExpert">${znak}<span>Geo<b>Expert</b></span></a>`;
@@ -87,21 +88,20 @@ const strelica = `<svg viewBox="0 0 14 14" fill="none" stroke-width="1.4" aria-h
 function head(L, kljuc) {
   const [naslov, opis] = L.meta[kljuc];
   const p = prefiks(L);
-  const url = SITE_URL + "/" + putanja(L, kljuc).replace(/index\.html$/, "").replace(/\.html$/, "");
-  const alt = SITE_URL + "/" + putanja(drugi(L), kljuc).replace(/index\.html$/, "").replace(/\.html$/, "");
-  const meUrl = L.lang === "me" ? url : alt, enUrl = L.lang === "en" ? url : alt;
+  const url = SITE_URL + "/" + cist(putanja(L, kljuc));
   return `<title>${esc(naslov)}</title>
 <meta name="description" content="${esc(opis)}">
 <link rel="canonical" href="${url}">
-<link rel="alternate" hreflang="sr-Latn-ME" href="${meUrl}">
-<link rel="alternate" hreflang="en" href="${enUrl}">
+${JEZICI.map((J) => `<link rel="alternate" hreflang="${J.htmlLang}" href="${SITE_URL}/${cist(putanja(J, kljuc))}">`).join("\n")}
+<link rel="alternate" hreflang="x-default" href="${SITE_URL}/${cist(putanja(me, kljuc))}">
 <meta property="og:title" content="${esc(naslov)}">
 <meta property="og:description" content="${esc(opis)}">
 <meta property="og:type" content="website">
 <meta property="og:url" content="${url}">
+<meta property="og:locale" content="${L.htmlLang.replace(/-/g, "_")}">
 <meta name="theme-color" content="#091117">
 <link rel="icon" href="${p}assets/favicon.svg" type="image/svg+xml">
-${PREVIEW ? `<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,100..900;1,62..125,100..900&display=swap">` : `<link rel="preload" href="${p}assets/fonts/archivo-latin-wdth-normal.woff2" as="font" type="font/woff2" crossorigin>`}
+${PREVIEW ? `<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,100..900;1,62..125,100..900&family=Roboto+Flex:opsz,wdth,wght@8..144,25..151,100..1000&display=swap">` : `<link rel="preload" href="${p}assets/fonts/archivo-latin-wdth-normal.woff2" as="font" type="font/woff2" crossorigin>`}
 <link rel="stylesheet" href="${p}assets/site.css?v=${V.css}">
 <script>document.documentElement.classList.add("js")</script>
 <script type="application/ld+json">${JSON.stringify({
@@ -113,19 +113,23 @@ ${PREVIEW ? `<link rel="stylesheet" href="https://fonts.googleapis.com/css2?fami
   })}</script>`;
 }
 
+function izborJezika(L, kljuc) {
+  return `<div class="jezici" role="group" aria-label="${L.jezikLabel}">${JEZICI.map((J) => J === L
+    ? `<span aria-current="true" lang="${J.htmlLang}" title="${J.ime}">${J.kod}</span>`
+    : `<a href="${prefiks(L)}${putanja(J, kljuc)}" hreflang="${J.htmlLang}" lang="${J.htmlLang}" title="${J.ime}">${J.kod}</a>`).join("")}</div>`;
+}
+
 function zaglavlje(L, kljuc) {
-  const d = drugi(L);
-  const drugiHref = (L.lang === "en" ? "../" : "en/") + d.stranice[kljuc];
   const cur = (k) => (k === kljuc ? ` aria-current="page"` : "");
   return `<a class="skip" href="#sadrzaj">${L.nav.preskoci}</a>
 <header class="zaglavlje"><div class="omot">
 ${logo(L)}
 <button class="meni-dugme" type="button" aria-expanded="false" aria-controls="nav">${L.nav.meni}</button>
-<nav class="nav" id="nav" aria-label="${L.lang === "en" ? "Main" : "Glavna"}">
+<nav class="nav" id="nav" aria-label="${L.navLabel}">
 <a href="${L.stranice.usluge}"${cur("usluge")}>${L.nav.usluge}</a>
 <a href="${L.stranice.onama}"${cur("onama")}>${L.nav.onama}</a>
 <a href="${L.stranice.kontakt}"${cur("kontakt")}>${L.nav.kontakt}</a>
-<a class="jezik" href="${drugiHref}" hreflang="${d.htmlLang}" lang="${d.htmlLang}">${L.nav.drugiJezik}</a>
+${izborJezika(L, kljuc)}
 <a class="tel" href="tel:${firma.tel1href}">${firma.tel1}</a>
 </nav></div></header>`;
 }
@@ -136,11 +140,11 @@ function podnozje(L) {
 <div class="kolone">
 <div>${logo(L)}<p style="margin-top:18px">${F.opis}</p></div>
 <div><h4>${F.stranice}</h4><a href="${L.stranice.pocetna}">GeoExpert</a><a href="${L.stranice.usluge}">${L.nav.usluge}</a><a href="${L.stranice.onama}">${L.nav.onama}</a><a href="${L.stranice.kontakt}">${L.nav.kontakt}</a></div>
-<div><h4>${F.kontakt}</h4><a href="${firma.mapa}" target="_blank" rel="noopener">${L.lang === "en" ? firma.adresaEn : firma.adresa}</a><a href="mailto:${firma.email}">${firma.email}</a><a class="broj" href="tel:${firma.tel1href}">${firma.tel1}</a><a class="broj" href="tel:${firma.tel2href}">${firma.tel2}</a></div>
+<div><h4>${F.kontakt}</h4><a href="${firma.mapa}" target="_blank" rel="noopener">${L.adresa}</a><a href="mailto:${firma.email}">${firma.email}</a><a class="broj" href="tel:${firma.tel1href}">${firma.tel1}</a><a class="broj" href="tel:${firma.tel2href}">${firma.tel2}</a></div>
 <div><h4>${F.radno}</h4><span>${F.radno1}</span><br><span>${F.radno2}</span></div>
 </div>
 <div class="veliki-znak" aria-hidden="true">Geo<b>Expert</b></div>
-<div class="dno"><span>© 2026 GeoExpert</span><span>${L.lang === "en" ? "Podgorica, Montenegro" : "Podgorica, Crna Gora"}</span></div>
+<div class="dno"><span>© 2026 GeoExpert</span><span>${L.drzava}</span></div>
 </div></footer>`;
 }
 
@@ -152,7 +156,7 @@ function kontaktBlok(L) {
 <div style="display:grid;gap:32px">
 <dl class="podaci">
 <div><dt>${C.email}</dt><dd><a href="mailto:${firma.email}">${firma.email}</a></dd></div>
-<div><dt>${C.adresa}</dt><dd>${L.lang === "en" ? firma.adresaEn : firma.adresa}</dd></div>
+<div><dt>${C.adresa}</dt><dd>${L.adresa}</dd></div>
 <div><dt>${C.radno}</dt><dd>${C.radnoV}</dd></div>
 </dl>
 <div class="akcije"><a class="dugme" href="${L.stranice.kontakt}">${C.pisite}</a><a class="dugme prazno" href="viber://chat?number=%2B${firma.tel1href.slice(1)}">${C.viber}</a><a class="veza" href="${firma.mapa}" target="_blank" rel="noopener">${C.mapa}</a></div>
@@ -249,7 +253,7 @@ function pocetna(L) {
 </div></section>
 
 <section class="sekcija dubina" aria-labelledby="pr-n"><div class="omot dvije">
-<h2 id="pr-n">${L.lang === "en" ? "How we work with clients" : "Kako radimo sa klijentima"}</h2>
+<h2 id="pr-n">${L.principiNaslov}</h2>
 ${principi(L)}
 </div></section>
 ${klijenti(L)}
@@ -306,7 +310,7 @@ function kontakt(L) {
 <div class="telefoni" style="margin-top:0"><a href="tel:${firma.tel1href}">${firma.tel1}</a><a href="tel:${firma.tel2href}">${firma.tel2}</a></div>
 <dl class="podaci">
 <div><dt>${C.email}</dt><dd><a href="mailto:${firma.email}">${firma.email}</a></dd></div>
-<div><dt>${C.adresa}</dt><dd>${L.lang === "en" ? firma.adresaEn : firma.adresa}<br><a class="veza" href="${firma.mapa}" target="_blank" rel="noopener">${C.mapa}</a></dd></div>
+<div><dt>${C.adresa}</dt><dd>${L.adresa}<br><a class="veza" href="${firma.mapa}" target="_blank" rel="noopener">${C.mapa}</a></dd></div>
 <div><dt>${C.radno}</dt><dd>${C.radnoV}</dd></div>
 <div><dt>${C.viber}</dt><dd><a href="viber://chat?number=%2B${firma.tel1href.slice(1)}">${firma.tel1}</a></dd></div>
 </dl></div>
@@ -316,8 +320,8 @@ function kontakt(L) {
 /* ---------- upis ---------- */
 const THREE = PREVIEW ? `<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>\n` : null;
 const upisi = (rel, html) => { const f = join(OUT, rel); mkdirSync(dirname(f), { recursive: true }); writeFileSync(f, html); };
-for (const L of [me, en]) {
-  const d = L.lang === "en" ? "en/" : "";
+for (const L of JEZICI) {
+  const d = L.dir;
   upisi(d + L.stranice.pocetna, strana(L, "pocetna", pocetna(L), THREE || `<script src="${prefiks(L)}assets/vendor/three.min.js" defer></script>\n`));
   upisi(d + L.stranice.usluge, strana(L, "usluge", usluge(L)));
   upisi(d + L.stranice.onama, strana(L, "onama", onama(L)));
@@ -325,7 +329,7 @@ for (const L of [me, en]) {
 }
 if (!PREVIEW) {
   const urls = [];
-  for (const L of [me, en]) for (const k of Object.keys(L.stranice)) urls.push(SITE_URL + "/" + putanja(L, k).replace(/index\.html$/, "").replace(/\.html$/, ""));
+  for (const L of JEZICI) for (const k of Object.keys(L.stranice)) urls.push(SITE_URL + "/" + putanja(L, k).replace(/index\.html$/, "").replace(/\.html$/, ""));
   upisi("sitemap.xml", `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map((u) => `  <url><loc>${u}</loc></url>`).join("\n")}\n</urlset>\n`);
   upisi("robots.txt", `User-agent: *\nAllow: /\nDisallow: /_build/\nSitemap: ${SITE_URL}/sitemap.xml\n`);
 }
