@@ -361,9 +361,10 @@ p { margin: 0; max-width: 62ch; }
 @media (max-width: 900px) { .grupa { grid-template-columns: minmax(0, 1fr); } .grupa li a { grid-template-columns: minmax(0, 1fr) 2.5rem; } .usluga { grid-template-columns: minmax(0, 1fr); } }
 
 /* telefon u heroju: dugme s okvirom */
-.tel-dugme { gap: 10px; border-color: rgba(236, 232, 223, .7); font-variant-numeric: tabular-nums; letter-spacing: .01em; }
+.tel-dugme { gap: 10px; font-variant-numeric: tabular-nums; letter-spacing: .01em; }
+.hero .akcije .dugme.prazno { border-color: rgba(236, 232, 223, .7); }
 .tel-dugme .ikona-tel { width: 16px; height: 16px; flex: none; }
-.tel-dugme:hover .ikona-tel { color: var(--pijesak); }
+
 
 /* izbor jezika na telefonu: dugme sa zastavicom + padajuća lista */
 .jezik-mob { display: none; position: relative; margin-left: auto; }
@@ -385,7 +386,7 @@ p { margin: 0; max-width: 62ch; }
 
 /* hero na telefonu: ponuda i telefon u jednom redu */
 @media (max-width: 600px) {
-  .hero .akcije { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.08fr); gap: 10px; }
+  .hero .akcije { display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(0, 1fr); gap: 10px; }
   .hero .akcije .dugme { min-height: 50px; padding: 0 10px; font-size: clamp(.8125rem, 3.7vw, .9375rem); white-space: nowrap; gap: 7px; letter-spacing: 0; }
   .hero .akcije .tel-dugme .ikona-tel { width: 14px; height: 14px; }
 }

@@ -250,7 +250,7 @@ function pocetna(L) {
 <div class="hero-dole">
 <h1 id="hero-n">${H.naslov}</h1>
 <div class="desno"><p class="uvod">${H.uvod}</p>
-<div class="akcije"><a class="dugme" href="${L.stranice.kontakt}">${H.ponuda}</a><a class="dugme prazno tel-dugme broj" href="tel:${firma.tel1href}" aria-label="${H.pozovite} ${firma.tel1}">${ikonaTel}${firma.tel1}</a></div></div>
+<div class="akcije"><a class="dugme tel-dugme broj" href="tel:${firma.tel1href}" aria-label="${H.pozovite} ${firma.tel1}">${ikonaTel}${firma.tel1}</a><a class="dugme prazno" href="${L.stranice.kontakt}">${H.ponuda}</a></div></div>
 </div>
 </div>
 <span class="potpis">${H.ilustracija}</span>
