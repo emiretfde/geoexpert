@@ -314,7 +314,6 @@ function pocetna(L) {
 <div class="hero-kontakt">
 <a class="dugme tel-dugme broj" href="tel:${firma.tel1href}">${ikonaTel}<span>${H.pozovite} ${firma.tel1}</span></a>
 <div class="glasnici">${poruke}</div>
-<a class="hero-forma" href="${L.stranice.kontakt}">${ikMail}<span>${H.forma}</span></a>
 </div></div>
 </div>
 </div>

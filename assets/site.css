@@ -386,7 +386,7 @@ p { margin: 0; max-width: 62ch; }
 
 
 
-/* hero: poziv, Viber/WhatsApp, forma */
+/* hero: poziv, Viber/WhatsApp */
 .hero-kontakt { display: grid; gap: 12px; max-width: 30rem; }
 .hero-kontakt .tel-dugme { width: 100%; min-height: 60px; background: var(--pijesak); border-color: var(--pijesak); color: var(--noc); font-size: 1.0625rem; font-weight: 560; gap: 12px; }
 .hero-kontakt .tel-dugme .ikona-tel { width: 19px; height: 19px; }
@@ -398,10 +398,6 @@ p { margin: 0; max-width: 62ch; }
 .glasnik.viber { --boja: #7360F2; }
 .glasnik.whatsapp { --boja: #25A85A; }
 .glasnik:hover { border-color: var(--boja); background: color-mix(in srgb, var(--boja) 12%, transparent); }
-.hero-forma { justify-self: center; display: inline-flex; align-items: center; gap: 10px; margin-top: 6px; color: var(--tiho); font-size: .9375rem; transition: color .2s; }
-.hero-forma span { border-bottom: 1px solid rgba(203, 170, 107, .55); padding-bottom: 2px; }
-.hero-forma .ikona-mail { width: 18px; height: 18px; color: var(--pijesak); flex: none; }
-.hero-forma:hover { color: var(--tekst); }
 .poruke-cta { display: inline-flex; flex-wrap: wrap; gap: 10px; }
 .poruke-cta .glasnik { min-height: 54px; }
 .podaci .poruke-cta .glasnik { min-height: 44px; padding: 0 16px 0 7px; gap: 10px; }
@@ -410,7 +406,6 @@ p { margin: 0; max-width: 62ch; }
   .glasnik { gap: 9px; padding: 0 10px; font-size: .9375rem; min-height: 54px; }
   .glasnik i { width: 28px; height: 28px; }
   .hero-kontakt .tel-dugme { min-height: 56px; font-size: 1rem; }
-  .hero-forma { font-size: .875rem; }
 }
 .telefoni a { white-space: nowrap; }
 .dvije .telefoni a { font-size: clamp(1.75rem, 3.3vw, 3.25rem); }
