@@ -382,3 +382,11 @@ p { margin: 0; max-width: 62ch; }
   .znak svg { height: 38px; }
 }
 @media (max-width: 360px) { .jezik-dugme span { display: none; } .jezik-dugme { padding: 0 10px 0 9px; } }
+
+/* hero na telefonu: ponuda i telefon u jednom redu */
+@media (max-width: 600px) {
+  .hero .akcije { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.08fr); gap: 10px; }
+  .hero .akcije .dugme { min-height: 50px; padding: 0 10px; font-size: clamp(.8125rem, 3.7vw, .9375rem); white-space: nowrap; gap: 7px; letter-spacing: 0; }
+  .hero .akcije .tel-dugme .ikona-tel { width: 14px; height: 14px; }
+}
+@media (max-width: 370px) { .hero .akcije .tel-dugme .ikona-tel { display: none; } }
