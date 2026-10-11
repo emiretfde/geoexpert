@@ -84,7 +84,10 @@ function planSvg(L) {
 
 
 /* ---------- dijelovi ---------- */
-const poruke = `<a class="poruka-dugme viber" href="${firma.viber}">Viber</a><a class="poruka-dugme whatsapp" href="${firma.whatsapp}" target="_blank" rel="noopener">WhatsApp</a>`;
+const ikViber = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3C7 3 3.5 5.9 3.5 10.6c0 2.6 1.1 4.5 3 5.7V20l3.1-2.4c.8.1 1.6.2 2.4.2 5 0 8.5-2.9 8.5-7.2S17 3 12 3z" fill="none" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/><path d="M9.3 7.9c.3-.3.7-.3.9 0l.8 1.1c.2.3.2.6-.1.9l-.4.4c.4.9 1.1 1.6 2 2l.4-.4c.3-.3.6-.3.9-.1l1.1.8c.3.2.3.6 0 .9l-.5.5c-.5.5-1.3.6-2 .3-1.7-.8-3-2.1-3.8-3.8-.3-.7-.2-1.5.3-2z" fill="#fff"/></svg>`;
+const ikWa = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5a8.5 8.5 0 0 0-7.3 12.8L3.5 20.5l4.3-1.1A8.5 8.5 0 1 0 12 3.5z" fill="none" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/><path d="M9.3 7.9c.3-.3.7-.3.9 0l.8 1.1c.2.3.2.6-.1.9l-.4.4c.4.9 1.1 1.6 2 2l.4-.4c.3-.3.6-.3.9-.1l1.1.8c.3.2.3.6 0 .9l-.5.5c-.5.5-1.3.6-2 .3-1.7-.8-3-2.1-3.8-3.8-.3-.7-.2-1.5.3-2z" fill="#fff"/></svg>`;
+const ikMail = `<svg class="ikona-mail" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5.5" width="18" height="13" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M3.8 7l8.2 6 8.2-6" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>`;
+const poruke = `<a class="glasnik viber" href="${firma.viber}"><i>${ikViber}</i>Viber</a><a class="glasnik whatsapp" href="${firma.whatsapp}" target="_blank" rel="noopener"><i>${ikWa}</i>WhatsApp</a>`;
 const ikonaTel = `<svg class="ikona-tel" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z" fill="currentColor"/></svg>`;
 const strelica = `<svg viewBox="0 0 14 14" fill="none" stroke-width="1.4" aria-hidden="true"><path d="M2 7h10M8 3l4 4-4 4"/></svg>`;
 
@@ -251,8 +254,11 @@ function pocetna(L) {
 <div class="hero-dole">
 <h1 id="hero-n">${H.naslov}</h1>
 <div class="desno"><p class="uvod">${H.uvod}</p>
-<div class="akcije"><a class="dugme tel-dugme broj" href="tel:${firma.tel1href}" aria-label="${H.pozovite} ${firma.tel1}">${ikonaTel}${firma.tel1}</a><a class="dugme prazno" href="${L.stranice.kontakt}">${H.ponuda}</a></div>
-<p class="poruke"><span>${H.poruka}</span>${poruke}</p></div>
+<div class="hero-kontakt">
+<a class="dugme tel-dugme broj" href="tel:${firma.tel1href}">${ikonaTel}<span>${H.pozovite} ${firma.tel1}</span></a>
+<div class="glasnici">${poruke}</div>
+<a class="hero-forma" href="${L.stranice.kontakt}">${ikMail}<span>${H.forma}</span></a>
+</div></div>
 </div>
 </div>
 <span class="potpis">${H.ilustracija}</span>

@@ -362,7 +362,7 @@ p { margin: 0; max-width: 62ch; }
 
 /* telefon u heroju: dugme s okvirom */
 .tel-dugme { gap: 10px; font-variant-numeric: tabular-nums; letter-spacing: .01em; }
-.hero .akcije .dugme.prazno { border-color: rgba(236, 232, 223, .7); }
+
 .tel-dugme .ikona-tel { width: 16px; height: 16px; flex: none; }
 
 
@@ -384,27 +384,34 @@ p { margin: 0; max-width: 62ch; }
 }
 @media (max-width: 360px) { .jezik-dugme span { display: none; } .jezik-dugme { padding: 0 10px 0 9px; } }
 
-/* hero na telefonu: ponuda i telefon u jednom redu */
-@media (max-width: 600px) {
-  .hero .akcije { display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(0, 1fr); gap: 10px; }
-  .hero .akcije .dugme { min-height: 50px; padding: 0 10px; font-size: clamp(.8125rem, 3.7vw, .9375rem); white-space: nowrap; gap: 7px; letter-spacing: 0; }
-  .hero .akcije .tel-dugme .ikona-tel { width: 14px; height: 14px; }
-}
-@media (max-width: 370px) { .hero .akcije .tel-dugme .ikona-tel { display: none; } }
 
-/* Viber / WhatsApp: diskretna dugmad */
-.poruke { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; margin: 0; font-size: .875rem; color: var(--tiho); }
-.poruke > span { margin-right: 2px; }
-.poruke-cta { display: inline-flex; flex-wrap: wrap; gap: 8px; }
-.poruka-dugme { display: inline-flex; align-items: center; gap: 8px; height: 34px; padding: 0 14px 0 12px; border: 1px solid var(--linija-jaka); border-radius: 999px; color: var(--tekst); font-size: .875rem; font-weight: 420; transition: border-color .25s, color .25s, background .25s; }
-.poruka-dugme::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--tacka); box-shadow: 0 0 0 3px color-mix(in srgb, var(--tacka) 22%, transparent); }
-.poruka-dugme.viber { --tacka: #8F6BE8; }
-.poruka-dugme.whatsapp { --tacka: #3FCB6A; }
-.poruka-dugme:hover { border-color: var(--tacka); color: #fff; background: color-mix(in srgb, var(--tacka) 12%, transparent); }
-.poziv .poruka-dugme { height: 54px; padding: 0 22px 0 18px; font-size: 1rem; }
-.podaci .poruka-dugme { height: 36px; }
-@media (max-width: 600px) {
-  .hero .poruke { display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(0, 1fr); gap: 8px 10px; font-size: .8125rem; }
-  .hero .poruke > span { grid-column: 1 / -1; }
-  .hero .poruka-dugme { justify-content: center; height: 40px; }
+
+/* hero: poziv, Viber/WhatsApp, forma */
+.hero-kontakt { display: grid; gap: 12px; max-width: 30rem; }
+.hero-kontakt .tel-dugme { width: 100%; min-height: 60px; background: var(--pijesak); border-color: var(--pijesak); color: var(--noc); font-size: 1.0625rem; font-weight: 560; gap: 12px; }
+.hero-kontakt .tel-dugme .ikona-tel { width: 19px; height: 19px; }
+.hero-kontakt .tel-dugme:hover { background: #DDBE82; border-color: #DDBE82; }
+.glasnici { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.glasnik { display: inline-flex; align-items: center; justify-content: center; gap: 12px; min-height: 58px; padding: 0 16px; border: 1px solid var(--linija-jaka); border-radius: 999px; background: rgba(236, 232, 223, .035); color: var(--tekst); font-weight: 460; font-size: 1rem; transition: border-color .25s, background .25s; }
+.glasnik i { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: var(--boja); flex: none; }
+.glasnik i svg { width: 18px; height: 18px; }
+.glasnik.viber { --boja: #7360F2; }
+.glasnik.whatsapp { --boja: #25A85A; }
+.glasnik:hover { border-color: var(--boja); background: color-mix(in srgb, var(--boja) 12%, transparent); }
+.hero-forma { justify-self: center; display: inline-flex; align-items: center; gap: 10px; margin-top: 6px; color: var(--tiho); font-size: .9375rem; transition: color .2s; }
+.hero-forma span { border-bottom: 1px solid rgba(203, 170, 107, .55); padding-bottom: 2px; }
+.hero-forma .ikona-mail { width: 18px; height: 18px; color: var(--pijesak); flex: none; }
+.hero-forma:hover { color: var(--tekst); }
+.poruke-cta { display: inline-flex; flex-wrap: wrap; gap: 10px; }
+.poruke-cta .glasnik { min-height: 54px; }
+.podaci .poruke-cta .glasnik { min-height: 44px; padding: 0 16px 0 7px; gap: 10px; }
+.podaci .poruke-cta .glasnik i { width: 28px; height: 28px; }
+@media (max-width: 400px) {
+  .glasnik { gap: 9px; padding: 0 10px; font-size: .9375rem; min-height: 54px; }
+  .glasnik i { width: 28px; height: 28px; }
+  .hero-kontakt .tel-dugme { min-height: 56px; font-size: 1rem; }
+  .hero-forma { font-size: .875rem; }
 }
+.telefoni a { white-space: nowrap; }
+.dvije .telefoni a { font-size: clamp(1.75rem, 3.3vw, 3.25rem); }
+@media (max-width: 400px) { .telefoni a { font-size: clamp(1.625rem, 8.4vw, 2.25rem); } }
