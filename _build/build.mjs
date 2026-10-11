@@ -231,6 +231,15 @@ function podnozje(L) {
 </div></footer>`;
 }
 
+function kontaktDugmad(L, forma = true) {
+  const H = L.hero;
+  return `<div class="hero-kontakt">
+<a class="dugme tel-dugme broj" href="tel:${firma.tel1href}">${ikonaTel}<span>${H.pozovite} ${firma.tel1}</span></a>
+<div class="glasnici">${poruke}</div>
+${forma ? `<a class="hero-forma" href="${L.stranice.kontakt}">${ikMail}<span>${H.forma}</span></a>` : ""}
+</div>`;
+}
+
 function kontaktBlok(L) {
   const C = L.cta;
   return `<section class="poziv sekcija" aria-labelledby="cta-n"><canvas class="izohipse" aria-hidden="true"></canvas><div class="omot kontakt-mreza">
@@ -239,10 +248,10 @@ function kontaktBlok(L) {
 <div style="display:grid;gap:32px">
 <dl class="podaci">
 <div><dt>${C.email}</dt><dd><a href="mailto:${firma.email}">${firma.email}</a></dd></div>
-<div><dt>${C.adresa}</dt><dd>${L.adresa}</dd></div>
+<div><dt>${C.adresa}</dt><dd>${L.adresa}<br><a class="veza" href="${firma.mapa}" target="_blank" rel="noopener">${C.mapa}</a></dd></div>
 <div><dt>${C.radno}</dt><dd>${C.radnoV}</dd></div>
 </dl>
-<div class="akcije"><a class="dugme" href="${L.stranice.kontakt}">${C.pisite}</a><span class="poruke-cta">${poruke}</span><a class="veza" href="${firma.mapa}" target="_blank" rel="noopener">${C.mapa}</a></div>
+${kontaktDugmad(L)}
 </div></div></section>`;
 }
 
@@ -311,10 +320,7 @@ function pocetna(L) {
 <div class="hero-dole">
 <h1 id="hero-n">${H.naslov}</h1>
 <div class="desno"><p class="uvod">${H.uvod}</p>
-<div class="hero-kontakt">
-<a class="dugme tel-dugme broj" href="tel:${firma.tel1href}">${ikonaTel}<span>${H.pozovite} ${firma.tel1}</span></a>
-<div class="glasnici">${poruke}</div>
-</div></div>
+${kontaktDugmad(L, false)}</div>
 </div>
 </div>
 <span class="potpis">${H.ilustracija}</span>
@@ -395,12 +401,12 @@ function kontakt(L) {
 <p class="status puno" role="status" aria-live="polite"></p>
 </form>
 <div class="kol">
-<div class="telefoni" style="margin-top:0"><a href="tel:${firma.tel1href}">${firma.tel1}</a><a href="tel:${firma.tel2href}">${firma.tel2}</a></div>
+${kontaktDugmad(L, false)}
 <dl class="podaci">
+<div><dt>${F.telefon}</dt><dd><a class="broj" href="tel:${firma.tel1href}">${firma.tel1}</a><br><a class="broj" href="tel:${firma.tel2href}">${firma.tel2}</a></dd></div>
 <div><dt>${C.email}</dt><dd><a href="mailto:${firma.email}">${firma.email}</a></dd></div>
 <div><dt>${C.adresa}</dt><dd>${L.adresa}<br><a class="veza" href="${firma.mapa}" target="_blank" rel="noopener">${C.mapa}</a></dd></div>
 <div><dt>${C.radno}</dt><dd>${C.radnoV}</dd></div>
-<div><dt>Viber / WhatsApp</dt><dd><span class="poruke-cta">${poruke}</span></dd></div>
 </dl></div>
 </div></section>`;
 }

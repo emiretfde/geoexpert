@@ -436,3 +436,14 @@ p { margin: 0; max-width: 62ch; }
 @keyframes pl-crtaj { from { stroke-dashoffset: 9000; } to { stroke-dashoffset: 0; } }
 @media (max-width: 900px) { .dron-mreza { grid-template-columns: minmax(0, 1fr); } }
 @media (max-width: 460px) { .dron-usluge { grid-template-columns: 1fr; } }
+
+/* isti blok poziva i poruka u pozivu na kontakt i na kontakt stranici */
+.poziv .hero-kontakt, .dvije .kol .hero-kontakt { width: 100%; }
+.dvije .kol { gap: 32px; }
+
+/* link na formu (samo u kontakt sekciji na dnu stranica) */
+.hero-forma { justify-self: center; display: inline-flex; align-items: center; gap: 10px; margin-top: 6px; color: var(--tiho); font-size: .9375rem; transition: color .2s; }
+.hero-forma span { border-bottom: 1px solid rgba(203, 170, 107, .55); padding-bottom: 2px; }
+.hero-forma .ikona-mail { width: 18px; height: 18px; color: var(--pijesak); flex: none; }
+.hero-forma:hover { color: var(--tekst); }
+@media (max-width: 400px) { .hero-forma { font-size: .875rem; } }
