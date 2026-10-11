@@ -84,6 +84,7 @@ function planSvg(L) {
 
 
 /* ---------- dijelovi ---------- */
+const ikonaTel = `<svg class="ikona-tel" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z" fill="currentColor"/></svg>`;
 const strelica = `<svg viewBox="0 0 14 14" fill="none" stroke-width="1.4" aria-hidden="true"><path d="M2 7h10M8 3l4 4-4 4"/></svg>`;
 
 function head(L, kljuc) {
@@ -130,11 +131,21 @@ function izborJezika(L, kljuc) {
     : `<a href="${prefiks(L)}${putanja(J, kljuc)}" hreflang="${J.htmlLang}" lang="${J.htmlLang}" title="${J.ime}">${zastava(J.kod)}${J.kod}</a>`).join("")}</div>`;
 }
 
+function jezikMob(L, kljuc) {
+  const ostali = JEZICI.filter((J) => J !== L).map((J) =>
+    `<li><a href="${prefiks(L)}${putanja(J, kljuc)}" hreflang="${J.htmlLang}" lang="${J.htmlLang}">${zastava(J.kod)}<span>${J.ime}</span></a></li>`).join("");
+  return `<div class="jezik-mob">
+<button class="jezik-dugme" type="button" aria-expanded="false" aria-controls="jezik-lista" aria-label="${L.jezikLabel}: ${L.ime}">${zastava(L.kod)}<span>${L.kod}</span><svg class="strelica-dolje" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.4"/></svg></button>
+<ul class="jezik-lista" id="jezik-lista" hidden>${ostali}</ul>
+</div>`;
+}
+
 function zaglavlje(L, kljuc) {
   const cur = (k) => (k === kljuc ? ` aria-current="page"` : "");
   return `<a class="skip" href="#sadrzaj">${L.nav.preskoci}</a>
 <header class="zaglavlje"><div class="omot">
 ${logo(L)}
+${jezikMob(L, kljuc)}
 <button class="meni-dugme" type="button" aria-expanded="false" aria-controls="nav">${L.nav.meni}</button>
 <nav class="nav" id="nav" aria-label="${L.navLabel}">
 <a href="${L.stranice.usluge}"${cur("usluge")}>${L.nav.usluge}</a>
@@ -239,7 +250,7 @@ function pocetna(L) {
 <div class="hero-dole">
 <h1 id="hero-n">${H.naslov}</h1>
 <div class="desno"><p class="uvod">${H.uvod}</p>
-<div class="akcije"><a class="dugme" href="${L.stranice.kontakt}">${H.ponuda}</a><a class="veza broj" href="tel:${firma.tel1href}">${firma.tel1}</a></div></div>
+<div class="akcije"><a class="dugme" href="${L.stranice.kontakt}">${H.ponuda}</a><a class="dugme prazno tel-dugme broj" href="tel:${firma.tel1href}" aria-label="${H.pozovite} ${firma.tel1}">${ikonaTel}${firma.tel1}</a></div></div>
 </div>
 </div>
 <span class="potpis">${H.ilustracija}</span>

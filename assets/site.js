@@ -48,6 +48,21 @@
     });
   }
 
+  /* ---------- izbor jezika na telefonu ---------- */
+  var jd = document.querySelector(".jezik-dugme"), jl = document.getElementById("jezik-lista");
+  if (jd && jl) {
+    var zatvoriJ = function () { jl.hidden = true; jd.setAttribute("aria-expanded", "false"); };
+    jd.addEventListener("click", function (e) {
+      e.stopPropagation();
+      var otvori = jl.hidden;
+      jl.hidden = !otvori; jd.setAttribute("aria-expanded", otvori ? "true" : "false");
+      if (otvori && nav && nav.classList.contains("otvoren")) dugme.click();
+    });
+    document.addEventListener("click", function (e) { if (!jl.hidden && !jl.contains(e.target)) zatvoriJ(); });
+    document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !jl.hidden) { zatvoriJ(); jd.focus(); } });
+    if (dugme) dugme.addEventListener("click", zatvoriJ);
+  }
+
   /* ---------- hero: naslov uvijek staje na prvi ekran ---------- */
   var hero = document.querySelector(".hero"), heroH1 = hero && hero.querySelector("h1");
   var uklopi = function () {

@@ -359,3 +359,26 @@ p { margin: 0; max-width: 62ch; }
 .grupa li a strong, .usluga header h2, .za-koga li, .klijenti li, .principi dt { hyphens: auto; -webkit-hyphens: auto; overflow-wrap: break-word; }
 .grupa > *, .grupa li a > *, .usluga > *, .usluga header > *, .sadrzaj-usluga > *, .dvije > *, .teren > *, .kontakt-mreza > * { min-width: 0; }
 @media (max-width: 900px) { .grupa { grid-template-columns: minmax(0, 1fr); } .grupa li a { grid-template-columns: minmax(0, 1fr) 2.5rem; } .usluga { grid-template-columns: minmax(0, 1fr); } }
+
+/* telefon u heroju: dugme s okvirom */
+.tel-dugme { gap: 10px; border-color: rgba(236, 232, 223, .7); font-variant-numeric: tabular-nums; letter-spacing: .01em; }
+.tel-dugme .ikona-tel { width: 16px; height: 16px; flex: none; }
+.tel-dugme:hover .ikona-tel { color: var(--pijesak); }
+
+/* izbor jezika na telefonu: dugme sa zastavicom + padajuća lista */
+.jezik-mob { display: none; position: relative; margin-left: auto; }
+.jezik-dugme { display: inline-flex; align-items: center; gap: 7px; height: 42px; padding: 0 12px 0 9px; background: none; border: 1px solid var(--linija-jaka); border-radius: 999px; color: var(--tekst); font: inherit; font-size: .875rem; font-stretch: 112%; cursor: pointer; }
+.jezik-dugme .zastava { width: 20px; height: 20px; filter: none; }
+.jezik-dugme .strelica-dolje { width: 10px; height: 6px; opacity: .7; transition: transform .25s var(--ease); }
+.jezik-dugme[aria-expanded="true"] .strelica-dolje { transform: rotate(180deg); }
+.jezik-lista { position: absolute; right: 0; top: calc(100% + 8px); min-width: 190px; margin: 0; padding: 6px; list-style: none; background: rgba(13, 24, 32, .98); border: 1px solid var(--linija-jaka); border-radius: 14px; box-shadow: 0 24px 48px -16px rgba(0, 0, 0, .7); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); z-index: 40; }
+.jezik-lista a { display: flex; align-items: center; gap: 12px; padding: 11px 12px; border-radius: 9px; color: var(--tekst); font-size: 1rem; }
+.jezik-lista a:hover, .jezik-lista a:focus-visible { background: rgba(236, 232, 223, .07); color: var(--pijesak); }
+.jezik-lista .zastava { width: 22px; height: 22px; filter: none; }
+@media (max-width: 900px) {
+  .jezik-mob { display: block; }
+  .meni-dugme { margin-left: 8px; }
+  .nav .jezici { display: none; }
+  .znak svg { height: 38px; }
+}
+@media (max-width: 360px) { .jezik-dugme span { display: none; } .jezik-dugme { padding: 0 10px 0 9px; } }
