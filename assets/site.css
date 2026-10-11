@@ -391,3 +391,20 @@ p { margin: 0; max-width: 62ch; }
   .hero .akcije .tel-dugme .ikona-tel { width: 14px; height: 14px; }
 }
 @media (max-width: 370px) { .hero .akcije .tel-dugme .ikona-tel { display: none; } }
+
+/* Viber / WhatsApp: diskretna dugmad */
+.poruke { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; margin: 0; font-size: .875rem; color: var(--tiho); }
+.poruke > span { margin-right: 2px; }
+.poruke-cta { display: inline-flex; flex-wrap: wrap; gap: 8px; }
+.poruka-dugme { display: inline-flex; align-items: center; gap: 8px; height: 34px; padding: 0 14px 0 12px; border: 1px solid var(--linija-jaka); border-radius: 999px; color: var(--tekst); font-size: .875rem; font-weight: 420; transition: border-color .25s, color .25s, background .25s; }
+.poruka-dugme::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--tacka); box-shadow: 0 0 0 3px color-mix(in srgb, var(--tacka) 22%, transparent); }
+.poruka-dugme.viber { --tacka: #8F6BE8; }
+.poruka-dugme.whatsapp { --tacka: #3FCB6A; }
+.poruka-dugme:hover { border-color: var(--tacka); color: #fff; background: color-mix(in srgb, var(--tacka) 12%, transparent); }
+.poziv .poruka-dugme { height: 54px; padding: 0 22px 0 18px; font-size: 1rem; }
+.podaci .poruka-dugme { height: 36px; }
+@media (max-width: 600px) {
+  .hero .poruke { display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(0, 1fr); gap: 8px 10px; font-size: .8125rem; }
+  .hero .poruke > span { grid-column: 1 / -1; }
+  .hero .poruka-dugme { justify-content: center; height: 40px; }
+}

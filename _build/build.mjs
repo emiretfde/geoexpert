@@ -84,6 +84,7 @@ function planSvg(L) {
 
 
 /* ---------- dijelovi ---------- */
+const poruke = `<a class="poruka-dugme viber" href="${firma.viber}">Viber</a><a class="poruka-dugme whatsapp" href="${firma.whatsapp}" target="_blank" rel="noopener">WhatsApp</a>`;
 const ikonaTel = `<svg class="ikona-tel" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z" fill="currentColor"/></svg>`;
 const strelica = `<svg viewBox="0 0 14 14" fill="none" stroke-width="1.4" aria-hidden="true"><path d="M2 7h10M8 3l4 4-4 4"/></svg>`;
 
@@ -181,7 +182,7 @@ function kontaktBlok(L) {
 <div><dt>${C.adresa}</dt><dd>${L.adresa}</dd></div>
 <div><dt>${C.radno}</dt><dd>${C.radnoV}</dd></div>
 </dl>
-<div class="akcije"><a class="dugme" href="${L.stranice.kontakt}">${C.pisite}</a><a class="dugme prazno" href="viber://chat?number=%2B${firma.tel1href.slice(1)}">${C.viber}</a><a class="veza" href="${firma.mapa}" target="_blank" rel="noopener">${C.mapa}</a></div>
+<div class="akcije"><a class="dugme" href="${L.stranice.kontakt}">${C.pisite}</a><span class="poruke-cta">${poruke}</span><a class="veza" href="${firma.mapa}" target="_blank" rel="noopener">${C.mapa}</a></div>
 </div></div></section>`;
 }
 
@@ -250,7 +251,8 @@ function pocetna(L) {
 <div class="hero-dole">
 <h1 id="hero-n">${H.naslov}</h1>
 <div class="desno"><p class="uvod">${H.uvod}</p>
-<div class="akcije"><a class="dugme tel-dugme broj" href="tel:${firma.tel1href}" aria-label="${H.pozovite} ${firma.tel1}">${ikonaTel}${firma.tel1}</a><a class="dugme prazno" href="${L.stranice.kontakt}">${H.ponuda}</a></div></div>
+<div class="akcije"><a class="dugme tel-dugme broj" href="tel:${firma.tel1href}" aria-label="${H.pozovite} ${firma.tel1}">${ikonaTel}${firma.tel1}</a><a class="dugme prazno" href="${L.stranice.kontakt}">${H.ponuda}</a></div>
+<p class="poruke"><span>${H.poruka}</span>${poruke}</p></div>
 </div>
 </div>
 <span class="potpis">${H.ilustracija}</span>
@@ -334,7 +336,7 @@ function kontakt(L) {
 <div><dt>${C.email}</dt><dd><a href="mailto:${firma.email}">${firma.email}</a></dd></div>
 <div><dt>${C.adresa}</dt><dd>${L.adresa}<br><a class="veza" href="${firma.mapa}" target="_blank" rel="noopener">${C.mapa}</a></dd></div>
 <div><dt>${C.radno}</dt><dd>${C.radnoV}</dd></div>
-<div><dt>${C.viber}</dt><dd><a href="viber://chat?number=%2B${firma.tel1href.slice(1)}">${firma.tel1}</a></dd></div>
+<div><dt>Viber / WhatsApp</dt><dd><span class="poruke-cta">${poruke}</span></dd></div>
 </dl></div>
 </div></section>`;
 }
