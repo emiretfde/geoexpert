@@ -79,8 +79,10 @@ p { margin: 0; max-width: 62ch; }
 .nav a { color: var(--tekst); opacity: .78; transition: opacity .2s, color .2s; }
 .nav a:hover, .nav a[aria-current="page"] { opacity: 1; color: var(--pijesak); }
 .jezici { display: flex; align-items: center; gap: 2px; font-size: .8125rem; font-stretch: 112%; letter-spacing: .02em; }
-.jezici a, .jezici span { padding: 6px 7px; border-radius: 999px; line-height: 1; }
-.nav .jezici a { opacity: .5; }
+.jezici a, .jezici span { display: inline-flex; align-items: center; gap: 6px; padding: 5px 9px 5px 5px; border-radius: 999px; line-height: 1; border: 1px solid transparent; transition: opacity .2s, color .2s, border-color .2s; }
+.zastava { width: 16px; height: 16px; flex: none; border-radius: 50%; box-shadow: 0 0 0 1px rgba(236, 232, 223, .28); filter: saturate(.55) brightness(.9); transition: filter .25s; }
+.jezici a:hover .zastava, .jezici span .zastava { filter: none; }
+.nav .jezici a { opacity: .62; }
 .nav .jezici a:hover { opacity: 1; color: var(--pijesak); }
 .jezici span { color: var(--pijesak); border: 1px solid rgba(203, 170, 107, .45); }
 .nav .tel { opacity: 1; border: 1px solid var(--linija-jaka); border-radius: 999px; padding: 9px 18px; font-variant-numeric: tabular-nums; }
@@ -93,7 +95,9 @@ p { margin: 0; max-width: 62ch; }
   .nav a { padding: 16px 0; font-size: 1.375rem; font-stretch: 118%; font-weight: 320; opacity: 1; border-bottom: 1px solid var(--linija); }
   .nav .tel { border: 0; border-radius: 0; padding: 16px 0; }
   .nav .jezici { padding: 18px 0; gap: 8px; border-bottom: 1px solid var(--linija); font-size: 1rem; }
-  .nav .jezici a, .nav .jezici span { padding: 9px 13px; border-bottom: 0; font-size: 1rem; font-weight: 400; }
+  .nav .jezici { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
+  .nav .jezici a, .nav .jezici span { justify-content: center; gap: 6px; padding: 8px 4px; border-bottom: 0; font-size: .9375rem; font-weight: 400; }
+  .nav .jezici .zastava { width: 18px; height: 18px; }
   .nav .jezici a { border: 1px solid var(--linija); }
 }
 .zaglavlje.otvoren-meni { background: rgba(9, 17, 23, .97); }
