@@ -273,6 +273,13 @@
     });
   }
 
+  /* ---------- plan leta: animacija kad se pojavi ---------- */
+  var pl = document.querySelector(".plan-leta");
+  if (pl && !redukovano && "IntersectionObserver" in window) {
+    var ioL = new IntersectionObserver(function (u) { if (u[0].isIntersecting) { pl.classList.add("leti"); ioL.disconnect(); } }, { threshold: 0.4 });
+    ioL.observe(pl);
+  }
+
   /* ---------- izohipse u pozivu na kontakt ---------- */
   var platna = document.querySelectorAll("canvas.izohipse");
   if (platna.length) {

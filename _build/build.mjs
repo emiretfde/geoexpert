@@ -5,7 +5,8 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { firma, me, en } from "./content.mjs";
 import { de, tr, ru } from "./prevodi.mjs";
-const JEZICI = [me, en, de, tr, ru];
+import { dodajDron } from "./dron.mjs";
+const JEZICI = [me, en, de, tr, ru].map(dodajDron);
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const SITE_URL = process.env.SITE_URL || "https://geoexpert-aes.pages.dev";
@@ -82,6 +83,62 @@ function planSvg(L) {
   return s;
 }
 
+
+/* ---------- plan leta drona (SVG) ---------- */
+function planLeta(L) {
+  const W = 600, H = 420;
+  const oblast = [[70,92],[318,58],[540,104],[552,300],[404,372],[120,350],[52,232]];
+  const pts2 = oblast.map((p) => p.join(",")).join(" ");
+  let s = `<svg class="plan-leta" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(L.dron.plan)}">`;
+  s += `<defs><clipPath id="oblast-leta"><polygon points="${pts2}"/></clipPath></defs>`;
+  // mreža
+  for (let x = 50; x < W; x += 50) s += `<line class="pl-mreza" x1="${x}" y1="0" x2="${x}" y2="${H}"/>`;
+  for (let y = 50; y < H; y += 50) s += `<line class="pl-mreza" x1="0" y1="${y}" x2="${W}" y2="${y}"/>`;
+  // otisci snimaka (preklop)
+  s += `<g clip-path="url(#oblast-leta)">`;
+  for (let i = 0, y = 70; y < 380; y += 34, i++) for (let x = 40 + (i % 2) * 14; x < 570; x += 40)
+    s += `<rect class="pl-otisak" x="${x - 22}" y="${y - 15}" width="44" height="30"/>`;
+  s += `</g>`;
+  s += `<polygon class="pl-oblast" points="${pts2}"/>`;
+  // serpentinska putanja
+  let d = "", tacke = "", smjer = 1, prvi = true;
+  for (let y = 70; y < 380; y += 34) {
+    const x1 = 40, x2 = 565;
+    const [a, b] = smjer > 0 ? [x1, x2] : [x2, x1];
+    d += prvi ? `M${a} ${y} L${b} ${y}` : ` L${a} ${y} L${b} ${y}`;
+    for (let x = 40 + 6; x < 565; x += 40) tacke += `<circle class="pl-snimak" cx="${x}" cy="${y}" r="2.2"/>`;
+    smjer *= -1; prvi = false;
+  }
+  s += `<g clip-path="url(#oblast-leta)"><path class="pl-putanja" d="${d}"/>${tacke}</g>`;
+  // kontrolne tačke
+  for (const [x, y] of [[92,112],[500,122],[520,284],[150,330],[300,214]])
+    s += `<g class="pl-gcp" transform="translate(${x} ${y})"><path d="M0 -9 L8 5 L-8 5 Z"/><circle r="1.8" cy="0.5"/></g>`;
+  // dron
+  s += `<g class="pl-dron" transform="translate(470 342)"><path d="M-14 -14 L14 14 M14 -14 L-14 14"/><circle cx="-14" cy="-14" r="7"/><circle cx="14" cy="-14" r="7"/><circle cx="-14" cy="14" r="7"/><circle cx="14" cy="14" r="7"/><rect x="-6" y="-6" width="12" height="12" rx="3"/></g>`;
+  s += `</svg>`;
+  return s;
+}
+
+function dronBlok(L) {
+  const D = L.dron;
+  const imena = L.grupe.find((g) => g.dron).usluge.map((k) => `<li><a href="${L.stranice.usluge}#${k}">${L.usluge[k].naziv}</a></li>`).join("");
+  return `<section class="sekcija dron" aria-labelledby="dron-n"><div class="omot dron-mreza">
+<div class="dron-tekst">
+<h2 id="dron-n">${D.naslov}</h2>
+<p class="uvod">${D.uvod}</p>
+<ul class="dron-usluge">${imena}</ul>
+<p><a class="veza" href="${L.stranice.usluge}#ortofoto">${D.vise}</a></p>
+</div>
+<figure class="list-plana dron-plan"><div class="unutra">${planLeta(L)}</div>
+<div class="naslovni-blok">
+<div>${D.plan}</div><div class="vrijednost siroko">${D.primjer}</div>
+<div>${D.visina}</div><div class="vrijednost">80 m</div>
+<div>${D.preklop}</div><div class="vrijednost">75 / 65 %</div>
+<div>${D.gsd}</div><div class="vrijednost">2 cm/px</div>
+<div>${D.gcp}</div><div class="vrijednost">5</div>
+</div></figure>
+</div></section>`;
+}
 
 /* ---------- dijelovi ---------- */
 const ikViber = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3C7 3 3.5 5.9 3.5 10.6c0 2.6 1.1 4.5 3 5.7V20l3.1-2.4c.8.1 1.6.2 2.4.2 5 0 8.5-2.9 8.5-7.2S17 3 12 3z" fill="none" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/><path d="M9.3 7.9c.3-.3.7-.3.9 0l.8 1.1c.2.3.2.6-.1.9l-.4.4c.4.9 1.1 1.6 2 2l.4-.4c.3-.3.6-.3.9-.1l1.1.8c.3.2.3.6 0 .9l-.5.5c-.5.5-1.3.6-2 .3-1.7-.8-3-2.1-3.8-3.8-.3-.7-.2-1.5.3-2z" fill="#fff"/></svg>`;
@@ -234,7 +291,7 @@ ${planSvg(L)}
 /* ---------- stranice ---------- */
 function pocetna(L) {
   const H = L.hero, S = L.stav;
-  const indeks = L.grupe.map((g) => `<div class="grupa"><h3>${g.naziv}</h3><ul>${g.usluge.map((k) => {
+  const indeks = L.grupe.filter((g) => !g.dron).map((g) => `<div class="grupa"><h3>${g.naziv}</h3><ul>${g.usluge.map((k) => {
     const u = L.usluge[k];
     return `<li><a href="${L.stranice.usluge}#${k}"><strong>${u.naziv}</strong><span>${u.kratko}</span><i>${strelica}</i></a></li>`;
   }).join("")}</ul></div>`).join("");
@@ -276,6 +333,8 @@ function pocetna(L) {
 <div class="glava-sekcije"><h2 id="usl-n">${L.uslugeNaslov}</h2><p>${L.uslugeUvod}</p></div>
 <div class="indeks">${indeks}</div>
 </div></section>
+
+${dronBlok(L)}
 
 <section class="sekcija" aria-labelledby="ter-n"><div class="omot">
 <div class="glava-sekcije"><h2 id="ter-n">${L.teren.naslov}</h2><p>${L.teren.uvod}</p></div>
