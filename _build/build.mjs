@@ -327,6 +327,8 @@ ${kontaktDugmad(L, false)}</div>
 <span class="potpis">${H.ilustracija}</span>
 </section>
 
+${dronBlok(L)}
+
 <section class="sekcija" aria-labelledby="stav-n"><div class="omot">
 <div class="izjava-blok">
 <div class="lijevo"><h2 id="stav-n" style="font-size:var(--t0);color:var(--pijesak);font-weight:420;font-stretch:112%;letter-spacing:0;max-width:24ch">${S.naslov}</h2></div>
@@ -339,8 +341,6 @@ ${kontaktDugmad(L, false)}</div>
 <div class="glava-sekcije"><h2 id="usl-n">${L.uslugeNaslov}</h2><p>${L.uslugeUvod}</p></div>
 <div class="indeks">${indeks}</div>
 </div></section>
-
-${dronBlok(L)}
 
 <section class="sekcija" aria-labelledby="ter-n"><div class="omot">
 <div class="glava-sekcije"><h2 id="ter-n">${L.teren.naslov}</h2><p>${L.teren.uvod}</p></div>
