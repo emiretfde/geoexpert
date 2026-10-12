@@ -80,15 +80,155 @@
   }
 
   /* ---------- hero: 3D oblak tačaka terena ---------- */
+  // Tri nivoa: puni WebGL; lakši WebGL na softverskom renderu; 2D crtanje bez WebGL-a ili kad je WebGL prespor.
   var platno = document.querySelector("canvas.oblak");
-  var pokreniOblak = function () {
-    if (!platno || !window.THREE) return;
+  var dijag = { webgl: "?", gpu: "-", nacin: "-", fps: 0 };
+  var infoGPU = function () {
+    try {
+      var c = document.createElement("canvas");
+      var gl = c.getContext("webgl") || c.getContext("experimental-webgl");
+      if (!gl) return null;
+      var ext = gl.getExtension("WEBGL_debug_renderer_info");
+      var r = ext ? gl.getParameter(ext.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER);
+      var lose = gl.getExtension("WEBGL_lose_context"); if (lose) lose.loseContext();
+      return String(r || "WebGL");
+    } catch (e) { return null; }
+  };
+  var visinaT = function (x, z) {
+    var r = Math.sqrt((x / 1.35) * (x / 1.35) + (z - 12) * (z - 12));
+    var basen = Math.min(1, Math.max(0, (r - 22) / 72)); basen = basen * basen * (3 - 2 * basen);
+    var n = fbm(x * 0.018 + 3, z * 0.018 + 7);
+    var gr = 1 - Math.abs(2 * fbm(x * 0.04 + 11, z * 0.04 + 2) - 1);
+    return basen * (14 + 38 * n + 26 * gr * gr) + 2.4 * fbm(x * 0.09, z * 0.09);
+  };
+  var RAMPA = [[0, [0.16, 0.32, 0.36]], [0.15, [0.24, 0.44, 0.46]], [0.42, [0.48, 0.56, 0.50]], [0.7, [0.82, 0.68, 0.42]], [1, [0.95, 0.93, 0.88]]];
+  var bojaT = function (t) {
+    for (var i = 1; i < RAMPA.length; i++) if (t <= RAMPA[i][0]) {
+      var a = RAMPA[i - 1], b = RAMPA[i], k = (t - a[0]) / (b[0] - a[0]);
+      return [a[1][0] + (b[1][0] - a[1][0]) * k, a[1][1] + (b[1][1] - a[1][1]) * k, a[1][2] + (b[1][2] - a[1][2]) * k];
+    }
+    return RAMPA[RAMPA.length - 1][1];
+  };
+  var oT = document.getElementById("o-t"), oY = document.getElementById("o-y"), oX = document.getElementById("o-x"), oH = document.getElementById("o-h");
+
+  /* 2D verzija: ista scena, projekcija računata ručno */
+  var oblak2D = function (zamijeni) {
+    if (!platno) return;
+    if (zamijeni) { var novi = platno.cloneNode(false); platno.parentNode.replaceChild(novi, platno); platno = novi; }
+    var ctx = platno.getContext("2d");
+    if (!ctx) { dijag.nacin = "bez prikaza"; return; }
+    if (dijag.nacin === "-") dijag.nacin = "2d";
+    var N = window.innerWidth < 760 ? 95 : 125, VEL = 220, n = N * N;
+    var px = new Float32Array(n), py = new Float32Array(n), pz = new Float32Array(n), rr = new Float32Array(n), cr = new Uint8Array(n * 3);
+    for (var iz = 0, i = 0; iz < N; iz++) for (var ix = 0; ix < N; ix++, i++) {
+      var x = (ix / (N - 1) - 0.5) * VEL, z = (iz / (N - 1) - 0.5) * VEL, h = visinaT(x, z), c = bojaT(Math.min(1, h / 70));
+      px[i] = x; py[i] = h; pz[i] = z; rr[i] = rnd();
+      cr[i * 3] = c[0] * 255; cr[i * 3 + 1] = c[1] * 255; cr[i * 3 + 2] = c[2] * 255;
+    }
+    var kx = [6, 19, 31, 44, 55], kz = [-6, 6, 17, 29];
+    var tacka = function (a, b) { return [kx[a] + Math.sin(a * 3.1 + b) * 1.6, kz[b] + Math.cos(a * 1.7 + b * 2.3) * 1.4]; };
+    var linije = [];
+    var gusto = function (tacke) {
+      var out = [];
+      for (var q = 0; q < tacke.length - 1; q++) for (var s2 = 0; s2 <= 10; s2++) {
+        var t = s2 / 10, lx = tacke[q][0] + (tacke[q + 1][0] - tacke[q][0]) * t, lz = tacke[q][1] + (tacke[q + 1][1] - tacke[q][1]) * t;
+        out.push([lx, visinaT(lx, lz) + 0.35, lz]);
+      }
+      return out;
+    };
+    for (var b = 0; b < kz.length; b++) { var red = []; for (var a = 0; a < kx.length; a++) red.push(tacka(a, b)); linije.push({ p: gusto(red), c: "203,170,107" }); }
+    for (var a2 = 0; a2 < kx.length; a2++) { var kol = []; for (var b2 = 0; b2 < kz.length; b2++) kol.push(tacka(a2, b2)); linije.push({ p: gusto(kol), c: "203,170,107" }); }
+    var d1 = tacka(1, 1), d2 = tacka(2, 1), e1 = tacka(1, 2), e2 = tacka(2, 2);
+    linije.push({ p: gusto([[d1[0] + (d2[0] - d1[0]) * 0.55, d1[1] + (d2[1] - d1[1]) * 0.55], [e1[0] + (e2[0] - e1[0]) * 0.48, e1[1] + (e2[1] - e1[1]) * 0.48]]), c: "226,87,76" });
+
+    var W = 0, H = 0;
+    var vel = function () {
+      var r = platno.getBoundingClientRect(), dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+      W = r.width; H = r.height; platno.width = W * dpr; platno.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    };
+    vel(); window.addEventListener("resize", vel);
+    var mis = { x: 0, y: 0, tx: 0, ty: 0 };
+    window.addEventListener("pointermove", function (e) { mis.tx = e.clientX / window.innerWidth - 0.5; mis.ty = e.clientY / window.innerHeight - 0.5; }, { passive: true });
+
+    var brT = 427, zadnje = 0;
+    var crtaj = function (t) {
+      mis.x += (mis.tx - mis.x) * 0.08; mis.y += (mis.ty - mis.y) * 0.08;
+      var ug = -0.32 + Math.sin(t * 0.045) * 0.22 + mis.x * 0.18, R = 205, cx = 18, cy = 6, cz = -6;
+      var ex = cx + Math.sin(ug) * R, ey = 74 - mis.y * 14, ez = cz + Math.cos(ug) * R;
+      var fx = cx - ex, fy = cy - ey, fz = cz - ez, fl = Math.sqrt(fx * fx + fy * fy + fz * fz); fx /= fl; fy /= fl; fz /= fl;
+      var rx = -fz, rz = fx, rl = Math.sqrt(rx * rx + rz * rz); rx /= rl; rz /= rl;
+      var ux = -rz * fy, uy = rz * fx - rx * fz, uz = rx * fy;
+      var F = (H / 2) / Math.tan((W / H < 1 ? 52 : 36) * Math.PI / 360);
+      var scan = ((t * 16) % 240) - 120;
+      ctx.clearRect(0, 0, W, H);
+      ctx.globalCompositeOperation = "lighter";
+      for (var k = 0; k < n; k++) {
+        var dx = px[k] - ex, dy = py[k] - ey, dz = pz[k] - ez;
+        var zc = dx * fx + dy * fy + dz * fz;
+        if (zc < 95) continue;
+        var sx = W / 2 + (dx * rx + dz * rz) / zc * F, sy = H / 2 - (dx * ux + dy * uy + dz * uz) / zc * F;
+        if (sx < -4 || sx > W + 4 || sy < -4 || sy > H + 4) continue;
+        var fade = Math.min(1, (zc - 95) / 70); fade = fade * fade * (3 - 2 * fade);
+        var sj = Math.max(0, 1 - Math.abs(pz[k] - scan) / 3.5);
+        var al = (Math.min(1, Math.max(0.18, 1.35 - zc / 280)) * (0.55 + 0.45 * rr[k]) + sj * 0.9) * fade;
+        if (al < 0.03) continue;
+        var o = k * 3, rC = cr[o], gC = cr[o + 1], bC = cr[o + 2];
+        if (sj > 0) { rC += (242 - rC) * sj; gC += (219 - gC) * sj; bC += (163 - bC) * sj; }
+        ctx.fillStyle = "rgba(" + (rC | 0) + "," + (gC | 0) + "," + (bC | 0) + "," + Math.min(1, al).toFixed(2) + ")";
+        var sz = Math.min(3.2, 2.3 * (170 / zc) * (1 + sj));
+        ctx.fillRect(sx - sz / 2, sy - sz / 2, sz, sz);
+      }
+      ctx.lineWidth = 1;
+      for (var L = 0; L < linije.length; L++) {
+        var p = linije[L].p; ctx.beginPath(); var poceo = false;
+        for (var m = 0; m < p.length; m++) {
+          var qx = p[m][0] - ex, qy = p[m][1] - ey, qz = p[m][2] - ez, qc = qx * fx + qy * fy + qz * fz;
+          if (qc < 1) continue;
+          var X = W / 2 + (qx * rx + qz * rz) / qc * F, Y = H / 2 - (qx * ux + qy * uy + qz * uz) / qc * F;
+          if (poceo) ctx.lineTo(X, Y); else { ctx.moveTo(X, Y); poceo = true; }
+        }
+        ctx.strokeStyle = "rgba(" + linije[L].c + ",.85)"; ctx.stroke();
+      }
+      ctx.globalCompositeOperation = "source-over";
+      if (t * 1000 - zadnje > 140) {
+        zadnje = t * 1000;
+        for (var pk = 0; pk < 40; pk++) {
+          var kk = Math.floor(rnd() * n);
+          if (Math.abs(pz[kk] - scan) < 3 && Math.abs(px[kk]) < 70) {
+            brT = (brT % 9999) + 1;
+            if (oT) oT.textContent = String(brT).padStart(4, "0");
+            if (oY) oY.textContent = fmt(6603400 + px[kk] * 1.8);
+            if (oX) oX.textContent = fmt(4700250 - pz[kk] * 1.8);
+            if (oH) oH.textContent = fmt(41 + py[kk] * 4.2) + " m";
+            break;
+          }
+        }
+      }
+    };
+    if (redukovano) { crtaj(8.4); return; }
+    var t0 = performance.now(), aktivan = true, vidljivo = true, br = 0, tFps = t0;
+    var petlja = function () {
+      if (!aktivan) return;
+      var sad = performance.now();
+      crtaj((sad - t0) / 1000);
+      br++; if (sad - tFps > 1000) { dijag.fps = br; br = 0; tFps = sad; }
+      setTimeout(function () { requestAnimationFrame(petlja); }, 1000 / 28);
+    };
+    petlja();
+    var osvjezi2 = function () { var treba = vidljivo && !document.hidden; if (treba && !aktivan) { aktivan = true; petlja(); } else if (!treba) aktivan = false; };
+    if ("IntersectionObserver" in window) new IntersectionObserver(function (u) { vidljivo = u[0].isIntersecting; osvjezi2(); }).observe(platno);
+    document.addEventListener("visibilitychange", osvjezi2);
+  };
+
+  /* WebGL verzija (puna ili lakša na softverskom renderu) */
+  var webglOblak = function (softver) {
     var THREE = window.THREE;
     var renderer;
     try { renderer = new THREE.WebGLRenderer({ canvas: platno, antialias: false, alpha: true, powerPreference: "high-performance" }); }
-    catch (e) { return; }
+    catch (e) { return false; }
+    dijag.nacin = softver ? "webgl (softverski, lakši)" : "webgl";
     var mobilni = window.innerWidth < 760;
-    var N = mobilni ? 170 : 250, VEL = 220;
+    var N = softver ? 110 : (mobilni ? 170 : 250), VEL = 220;
     var visina = function (x, z) {
       var r = Math.sqrt((x / 1.35) * (x / 1.35) + (z - 12) * (z - 12));
       var basen = Math.min(1, Math.max(0, (r - 22) / 72)); basen = basen * basen * (3 - 2 * basen);
@@ -119,7 +259,7 @@
     geo.setAttribute("position", new THREE.BufferAttribute(poz, 3));
     geo.setAttribute("color", new THREE.BufferAttribute(boje, 3));
     geo.setAttribute("rnd", new THREE.BufferAttribute(slucajno, 1));
-    var pr = Math.min(window.devicePixelRatio || 1, 1.75);
+    var pr = softver ? 1 : Math.min(window.devicePixelRatio || 1, 1.75);
     var uni = { uScan: { value: -110 }, uSize: { value: mobilni ? 2.6 : 2.5 }, uPR: { value: pr } };
     var mat = new THREE.ShaderMaterial({
       uniforms: uni, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, vertexColors: true,
@@ -199,7 +339,16 @@
     };
 
     var aktivan = true, t0 = performance.now();
+    var mjere = [], prosloV = 0, presao = false;
     var kadar = function (sad) {
+      if (presao) return;
+      if (prosloV) { mjere.push(sad - prosloV); if (mjere.length > 30) mjere.shift(); }
+      prosloV = sad;
+      if (mjere.length >= 30) {
+        var pros = mjere.reduce(function (a, b) { return a + b; }, 0) / mjere.length;
+        dijag.fps = Math.round(1000 / pros);
+        if (pros > 55 && sad - t0 > 2500) { presao = true; aktivan = false; dijag.nacin = "2d (WebGL prespor)"; try { renderer.dispose(); } catch (e) {} oblak2D(true); return; }
+      }
       var t = (sad - t0) / 1000;
       mis.x += (mis.tx - mis.x) * 0.04; mis.y += (mis.ty - mis.y) * 0.04;
       var ug = -0.32 + Math.sin(t * 0.045) * 0.22 + mis.x * 0.18;
@@ -212,20 +361,44 @@
       renderer.render(scena, kamera);
       if (sad - zadnje > 140) { zadnje = sad; ocitaj(scan); }
       if (aktivan && !redukovano) requestAnimationFrame(kadar);
+      else prosloV = 0;
     };
-    if (redukovano) { uni.uScan.value = 20; kadar(t0); ocitaj(20); return; }
+    if (redukovano) { uni.uScan.value = 20; kadar(t0); ocitaj(20); return true; }
     requestAnimationFrame(kadar);
     var vidljivo = true, pokaziStr = true;
     var osvjezi = function () {
       var treba = vidljivo && pokaziStr;
-      if (treba && !aktivan) { aktivan = true; requestAnimationFrame(kadar); } else if (!treba) aktivan = false;
+      if (presao) return;
+      if (treba && !aktivan) { aktivan = true; prosloV = 0; mjere = []; requestAnimationFrame(kadar); } else if (!treba) aktivan = false;
     };
     if ("IntersectionObserver" in window) new IntersectionObserver(function (u) { vidljivo = u[0].isIntersecting; osvjezi(); }).observe(platno);
     document.addEventListener("visibilitychange", function () { pokaziStr = !document.hidden; osvjezi(); });
+    return true;
+  };
+
+  var pokreniOblak = function () {
+    if (!platno) return;
+    var gpu = infoGPU();
+    dijag.webgl = gpu === null ? "ne" : "da"; dijag.gpu = gpu || "-";
+    var softver = !!gpu && /swiftshader|llvmpipe|softpipe|software|basic render/i.test(gpu);
+    if (gpu === null || !window.THREE || !webglOblak(softver)) oblak2D(false);
   };
   if (platno) {
     if (window.THREE) pokreniOblak();
     else window.addEventListener("load", pokreniOblak);
+  }
+
+  /* dijagnostika: otvoriti stranicu s #dijag na kraju adrese */
+  if (location.hash === "#dijag") {
+    var dp = document.createElement("div");
+    dp.style.cssText = "position:fixed;left:12px;bottom:12px;z-index:99;max-width:min(92vw,520px);padding:12px 14px;background:rgba(9,17,23,.94);color:#ECE8DF;border:1px solid #CBAA6B;border-radius:10px;font:13px/1.5 monospace;white-space:pre-wrap";
+    document.body.appendChild(dp);
+    var pisi = function () {
+      dp.textContent = "WebGL: " + dijag.webgl + "\nGPU: " + dijag.gpu + "\nNačin: " + dijag.nacin + "\nFPS: " + dijag.fps +
+        "\nSmanjene animacije (OS): " + (redukovano ? "DA" : "ne") + "\nEkran: " + window.innerWidth + "x" + window.innerHeight + " @" + (window.devicePixelRatio || 1) +
+        "\nPregledač: " + navigator.userAgent;
+    };
+    pisi(); setInterval(pisi, 1000);
   }
 
   /* ---------- katastarski plan ---------- */
