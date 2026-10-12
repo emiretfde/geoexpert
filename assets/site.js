@@ -519,22 +519,4 @@
     if (kanal) mjeri("kontakt_klik", { kanal: kanal, mjesto: a.closest(".hero") ? "hero" : a.closest(".poziv") ? "poziv" : a.closest(".zaglavlje") ? "zaglavlje" : a.closest(".podnozje") ? "podnozje" : "stranica" });
   }, true);
 
-  /* ---------- kontakt forma ---------- */
-  var forma = document.querySelector("form.forma");
-  if (forma) {
-    var status = forma.querySelector(".status");
-    forma.addEventListener("submit", function (e) {
-      e.preventDefault();
-      var fd = new FormData(forma);
-      if (!fd.get("ime") || !fd.get("email") || !fd.get("poruka")) { status.textContent = T.fali; status.classList.add("greska"); return; }
-      status.classList.remove("greska"); status.textContent = T.saljem;
-      var btn = forma.querySelector("button"); btn.disabled = true;
-      var podaci = {}; fd.forEach(function (v, k) { podaci[k] = v; }); podaci.jezik = lang;
-      fetch("/api/contact", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(podaci) })
-        .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
-        .then(function () { status.textContent = T.poslato; forma.reset(); mjeri("upit_poslat", { usluga: podaci.usluga || "" }); })
-        .catch(function () { status.textContent = T.greska; status.classList.add("greska"); })
-        .then(function () { btn.disabled = false; });
-    });
-  }
 })();

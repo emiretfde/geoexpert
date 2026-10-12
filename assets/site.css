@@ -464,3 +464,10 @@ p { margin: 0; max-width: 62ch; }
 @media (max-width: 760px) { .pravni-tekst div { grid-template-columns: minmax(0, 1fr); gap: 6px; } }
 .naslov-strane .omot > * { min-width: 0; }
 .naslov-strane h1 { overflow-wrap: anywhere; }
+
+/* kontakt bez forme */
+.kontakt-kanali { gap: 12px; max-width: 30rem; }
+.glasnik.email-dugme { --boja: #CBAA6B; width: 100%; justify-content: center; font-variant-numeric: tabular-nums; }
+.glasnik.email-dugme i svg { color: #091117; width: 17px; height: 17px; }
+@media (max-width: 400px) { .glasnik.email-dugme { font-size: .875rem; } }
+.dvije .kontakt-kanali { gap: 12px; }

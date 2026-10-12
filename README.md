@@ -7,7 +7,6 @@ Statički, dvojezični sajt (crnogorski + engleski) za geodetsku firmu GeoExpert
 - `index.html`, `usluge.html`, `o-nama.html`, `kontakt.html`: crnogorska verzija
 - `en/`, `de/`, `tr/`, `ru/`: engleska, njemačka, turska i ruska verzija
 - `assets/`: CSS, JS, favicon i fontovi (Archivo, OFL licenca, hostovan lokalno)
-- `functions/api/contact.js`: Cloudflare Pages funkcija za kontakt formu
 - `404.html`: stranica za nepostojeće adrese
 - `assets/og-image.jpg`: slika koja se prikazuje kad se link podijeli
 - `functions/_middleware.js`: preusmjerava www.geoexpert.me i geoexpert-aes.pages.dev na geoexpert.me
@@ -32,13 +31,6 @@ Workers & Pages → Create → Pages → Connect to Git → izabrati ovaj repo.
 
 Svaki push na `main` objavljuje sajt automatski.
 
-## Kontakt forma
+## Kontakt
 
-Forma šalje na `/api/contact`, koja prosljeđuje poruku na e-mail preko [Resend](https://resend.com).
-U Pages → Settings → Variables and Secrets dodati:
-
-- `RESEND_API_KEY`: tajna
-- `CONTACT_TO`: `geoexpertpg@gmail.com`
-- `CONTACT_FROM`: npr. `GeoExpert sajt <forma@vas-domen.me>` (domen verifikovan u Resendu)
-
-Bez ključa forma prikazuje telefon i e-mail kao rezervni kontakt.
+Sajt nema formu. E-pošta firme je u `_build/content.mjs` (`firma.email`); pošta na @geoexpert.me se preko Cloudflare Email Routing prosljeđuje na Gmail.

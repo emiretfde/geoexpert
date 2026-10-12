@@ -254,7 +254,7 @@ function kontaktDugmad(L, forma = true) {
   return `<div class="hero-kontakt">
 <a class="dugme tel-dugme broj" href="tel:${firma.tel1href}">${ikonaTel}<span>${H.pozovite} ${firma.tel1}</span></a>
 <div class="glasnici">${poruke}</div>
-${forma ? `<a class="hero-forma" href="${L.stranice.kontakt}">${ikMail}<span>${H.forma}</span></a>` : ""}
+${forma ? `<a class="hero-forma" href="mailto:${firma.email}">${ikMail}<span>${H.forma} ${firma.email}</span></a>` : ""}
 </div>`;
 }
 
@@ -424,27 +424,18 @@ function stranica404() {
 
 function kontakt(L) {
   const K = L.kontakt, F = K.forma, C = L.cta;
-  const opcije = L.grupe.flatMap((g) => g.usluge).map((k) => `<option>${L.usluge[k].naziv}</option>`).join("");
   return `<section class="naslov-strane"><div class="omot"><p class="oznaka">${L.nav.kontakt}</p><h1>${K.naslov}</h1><p class="uvod">${K.uvod}</p></div></section>
 <section class="sekcija" style="padding-top:clamp(56px,7vw,96px)"><div class="omot dvije">
-<form class="forma" novalidate>
-<div class="polje"><label for="f-ime">${F.ime}</label><input id="f-ime" name="ime" autocomplete="name" required></div>
-<div class="polje"><label for="f-email">${F.email}</label><input id="f-email" name="email" type="email" autocomplete="email" required></div>
-<div class="polje"><label for="f-tel">${F.telefon} ${F.neobavezno}</label><input id="f-tel" name="telefon" type="tel" autocomplete="tel"></div>
-<div class="polje"><label for="f-usluga">${F.usluga}</label><select id="f-usluga" name="usluga"><option value="">${F.izaberi}</option>${opcije}<option>${F.drugo}</option></select></div>
-<div class="polje puno"><label for="f-poruka">${F.poruka}</label><textarea id="f-poruka" name="poruka" placeholder="${esc(F.porukaPh)}" required></textarea></div>
-<div class="zamka" aria-hidden="true"><label for="f-web">Web</label><input id="f-web" name="web" tabindex="-1" autocomplete="off"></div>
-<button class="dugme puno" type="submit">${F.posalji}</button>
-<p class="status puno" role="status" aria-live="polite"></p>
-</form>
-<div class="kol">
+<div class="kol kontakt-kanali">
 ${kontaktDugmad(L, false)}
+<a class="glasnik email-dugme" href="mailto:${firma.email}"><i>${ikMail}</i>${firma.email}</a>
+</div>
 <dl class="podaci">
 <div><dt>${F.telefon}</dt><dd><a class="broj" href="tel:${firma.tel1href}">${firma.tel1}</a><br><a class="broj" href="tel:${firma.tel2href}">${firma.tel2}</a></dd></div>
 <div><dt>${C.email}</dt><dd><a href="mailto:${firma.email}">${firma.email}</a></dd></div>
 <div><dt>${C.adresa}</dt><dd>${L.adresa}<br><a class="veza" href="${firma.mapa}" target="_blank" rel="noopener">${C.mapa}</a></dd></div>
 <div><dt>${C.radno}</dt><dd>${C.radnoV}</dd></div>
-</dl></div>
+</dl>
 </div></section>`;
 }
 
