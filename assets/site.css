@@ -471,3 +471,16 @@ p { margin: 0; max-width: 62ch; }
 .glasnik.email-dugme i svg { color: #091117; width: 17px; height: 17px; }
 @media (max-width: 400px) { .glasnik.email-dugme { font-size: .875rem; } }
 .dvije .kontakt-kanali { gap: 12px; }
+
+/* mapa na kontakt stranici */
+.mapa { position: relative; margin: clamp(48px, 6vw, 80px) 0 0; height: clamp(280px, 38vw, 420px); border: 1px solid var(--linija); border-radius: 6px; overflow: hidden; background: var(--povrsina); }
+.mapa iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; pointer-events: none; filter: invert(.9) hue-rotate(180deg) saturate(.55) brightness(.92) contrast(.92); }
+.mapa::after { content: ""; position: absolute; inset: 0; pointer-events: none; box-shadow: inset 0 0 0 1px rgba(236,232,223,.04), inset 0 -120px 120px -60px rgba(9,17,23,.75); }
+.mapa-link { position: absolute; inset: 0; z-index: 1; display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; padding: 20px 22px; color: var(--tekst); }
+.mapa-adresa { display: grid; gap: 2px; font-size: .9375rem; color: var(--tiho); text-shadow: 0 1px 12px rgba(9,17,23,.9); }
+.mapa-adresa b { color: var(--tekst); font-weight: 520; font-size: 1.0625rem; }
+.mapa-dugme { min-height: 46px; padding: 0 18px; gap: 10px; background: rgba(9,17,23,.72); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); flex: none; }
+.mapa-dugme svg { width: 13px; height: 13px; }
+.mapa-link:hover .mapa-dugme { border-color: var(--pijesak); color: var(--pijesak); }
+.mapa-link:focus-visible { outline-offset: -4px; }
+@media (max-width: 560px) { .mapa-link { flex-direction: column; align-items: flex-start; } .mapa-dugme { align-self: stretch; justify-content: center; } }

@@ -436,7 +436,12 @@ ${kontaktDugmad(L, false)}
 <div><dt>${C.adresa}</dt><dd>${L.adresa}<br><a class="veza" href="${firma.mapa}" target="_blank" rel="noopener">${C.mapa}</a></dd></div>
 <div><dt>${C.radno}</dt><dd>${C.radnoV}</dd></div>
 </dl>
-</div></section>`;
+</div>
+<div class="omot"><figure class="mapa">
+<iframe src="https://www.google.com/maps?q=42.4450711,19.2553269&amp;z=16&amp;hl=${L.lang === "me" ? "sr-Latn" : L.lang}&amp;output=embed" title="${C.adresa}: ${L.adresa}" loading="lazy" referrerpolicy="no-referrer-when-downgrade" tabindex="-1"></iframe>
+<a class="mapa-link" href="${firma.mapa}" target="_blank" rel="noopener"><span class="mapa-adresa"><b>GeoExpert</b>${L.adresa}</span><span class="dugme prazno mapa-dugme">${C.mapa}<svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M4 10L10 4M5 4h5v5"/></svg></span></a>
+</figure></div>
+</section>`;
 }
 
 /* ---------- upis ---------- */
