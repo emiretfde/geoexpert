@@ -455,3 +455,12 @@ p { margin: 0; max-width: 62ch; }
 .podnozje .pravno { font-variant-numeric: tabular-nums; letter-spacing: .01em; }
 .podnozje .pravno i { font-style: normal; color: rgba(203, 170, 107, .6); margin-inline: .35em; }
 @media (max-width: 760px) { .podnozje .dno { flex-direction: column; } }
+
+/* politika privatnosti i 404 */
+.pravni-tekst div { grid-template-columns: 16rem 1fr; }
+.pravni-tekst dd { max-width: 68ch; }
+.jezici-404 .dugme { gap: 10px; min-height: 48px; padding: 0 18px 0 12px; }
+.jezici-404 .zastava { width: 20px; height: 20px; border-radius: 50%; }
+@media (max-width: 760px) { .pravni-tekst div { grid-template-columns: minmax(0, 1fr); gap: 6px; } }
+.naslov-strane .omot > * { min-width: 0; }
+.naslov-strane h1 { overflow-wrap: anywhere; }

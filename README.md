@@ -8,8 +8,10 @@ Statički, dvojezični sajt (crnogorski + engleski) za geodetsku firmu GeoExpert
 - `en/`, `de/`, `tr/`, `ru/`: engleska, njemačka, turska i ruska verzija
 - `assets/`: CSS, JS, favicon i fontovi (Archivo, OFL licenca, hostovan lokalno)
 - `functions/api/contact.js`: Cloudflare Pages funkcija za kontakt formu
+- `404.html`: stranica za nepostojeće adrese
+- `assets/og-image.jpg`: slika koja se prikazuje kad se link podijeli
 - `functions/_middleware.js`: preusmjerava www.geoexpert.me i geoexpert-aes.pages.dev na geoexpert.me
-- `_build/`: izvor sadržaja (`content.mjs`, `prevodi.mjs`, `dron.mjs`, `dopune.mjs`) i generator stranica (`build.mjs`)
+- `_build/`: izvor sadržaja (`content.mjs`, `prevodi.mjs`, `dron.mjs`, `dopune.mjs`, `pravno.mjs` za politiku privatnosti) i generator stranica (`build.mjs`)
 
 ## Izmjena teksta
 

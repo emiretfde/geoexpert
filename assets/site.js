@@ -498,6 +498,27 @@
     window.addEventListener("resize", function () { clearTimeout(tajmer); tajmer = setTimeout(sve, 200); });
   }
 
+  /* ---------- mjerenje konverzija (za Google Analytics / Ads kad se uključe) ---------- */
+  // Događaji idu u dataLayer; bez Google taga ništa se ne šalje i ne postavljaju se kolačići.
+  var mjeri = function (dogadjaj, detalji) {
+    try {
+      var d = { event: dogadjaj, jezik: lang };
+      for (var k in detalji) d[k] = detalji[k];
+      (window.dataLayer = window.dataLayer || []).push(d);
+      if (typeof window.gtag === "function") window.gtag("event", dogadjaj, detalji || {});
+    } catch (e) {}
+  };
+  document.addEventListener("click", function (e) {
+    var a = e.target.closest && e.target.closest("a[href]");
+    if (!a) return;
+    var h = a.getAttribute("href") || "", kanal = "";
+    if (h.indexOf("tel:") === 0) kanal = "telefon";
+    else if (h.indexOf("viber:") === 0) kanal = "viber";
+    else if (h.indexOf("wa.me") > -1 || h.indexOf("whatsapp") > -1) kanal = "whatsapp";
+    else if (h.indexOf("mailto:") === 0) kanal = "email";
+    if (kanal) mjeri("kontakt_klik", { kanal: kanal, mjesto: a.closest(".hero") ? "hero" : a.closest(".poziv") ? "poziv" : a.closest(".zaglavlje") ? "zaglavlje" : a.closest(".podnozje") ? "podnozje" : "stranica" });
+  }, true);
+
   /* ---------- kontakt forma ---------- */
   var forma = document.querySelector("form.forma");
   if (forma) {
@@ -511,7 +532,7 @@
       var podaci = {}; fd.forEach(function (v, k) { podaci[k] = v; }); podaci.jezik = lang;
       fetch("/api/contact", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(podaci) })
         .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
-        .then(function () { status.textContent = T.poslato; forma.reset(); })
+        .then(function () { status.textContent = T.poslato; forma.reset(); mjeri("upit_poslat", { usluga: podaci.usluga || "" }); })
         .catch(function () { status.textContent = T.greska; status.classList.add("greska"); })
         .then(function () { btn.disabled = false; });
     });

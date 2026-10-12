@@ -7,7 +7,8 @@ import { firma, me, en } from "./content.mjs";
 import { de, tr, ru } from "./prevodi.mjs";
 import { dodajDron } from "./dron.mjs";
 import { dodajDopune } from "./dopune.mjs";
-const JEZICI = [me, en, de, tr, ru].map(dodajDron).map(dodajDopune);
+import { dodajPravno } from "./pravno.mjs";
+const JEZICI = [me, en, de, tr, ru].map(dodajDron).map(dodajDopune).map(dodajPravno);
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const SITE_URL = process.env.SITE_URL || "https://geoexpert.me";
@@ -171,9 +172,16 @@ ${JEZICI.map((J) => `<link rel="alternate" hreflang="${J.htmlLang}" href="${SITE
 <meta property="og:description" content="${esc(opis)}">
 <meta property="og:type" content="website">
 <meta property="og:url" content="${url}">
+<meta property="og:image" content="${SITE_URL}/assets/og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:site_name" content="GeoExpert">
+<meta name="twitter:card" content="summary_large_image">
 <meta property="og:locale" content="${L.htmlLang.replace(/-/g, "_")}">
 <meta name="theme-color" content="#091117">
 <link rel="icon" href="${p}assets/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="${p}assets/favicon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="${p}assets/apple-touch-icon.png">
 ${PREVIEW ? `<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,100..900;1,62..125,100..900&family=Roboto+Flex:opsz,wdth,wght@8..144,25..151,100..1000&display=swap">` : `<link rel="preload" href="${p}assets/fonts/archivo-latin-wdth-normal.woff2" as="font" type="font/woff2" crossorigin>`}
 <link rel="stylesheet" href="${p}assets/site.css?v=${V.css}">
 <script>document.documentElement.classList.add("js")</script>
@@ -232,7 +240,7 @@ function podnozje(L) {
   return `<footer class="podnozje"><div class="omot">
 <div class="kolone">
 <div>${logo(L)}<p style="margin-top:18px">${F.opis}</p></div>
-<div><h4>${F.stranice}</h4><a href="${L.stranice.pocetna}">GeoExpert</a><a href="${L.stranice.usluge}">${L.nav.usluge}</a><a href="${L.stranice.onama}">${L.nav.onama}</a><a href="${L.stranice.kontakt}">${L.nav.kontakt}</a></div>
+<div><h4>${F.stranice}</h4><a href="${L.stranice.pocetna}">GeoExpert</a><a href="${L.stranice.usluge}">${L.nav.usluge}</a><a href="${L.stranice.onama}">${L.nav.onama}</a><a href="${L.stranice.kontakt}">${L.nav.kontakt}</a><a href="${L.stranice.privatnost}">${L.privatnost.link}</a></div>
 <div><h4>${F.kontakt}</h4><a href="${firma.mapa}" target="_blank" rel="noopener">${L.adresa}</a><a href="mailto:${firma.email}">${firma.email}</a><a class="broj" href="tel:${firma.tel1href}">${firma.tel1}</a><a class="broj" href="tel:${firma.tel2href}">${firma.tel2}</a></div>
 <div><h4>${F.radno}</h4><span>${F.radno1}</span><br><span>${F.radno2}</span></div>
 </div>
@@ -395,6 +403,25 @@ ${klijenti(L)}
 ${kontaktBlok(L)}`;
 }
 
+function privatnost(L) {
+  const P = L.privatnost;
+  return `<section class="naslov-strane"><div class="omot"><p class="oznaka">${P.azurirano}</p><h1>${P.naslov}</h1><p class="uvod">${P.uvod}</p></div></section>
+<section class="sekcija" style="padding-top:clamp(48px,6vw,88px)"><div class="omot"><dl class="principi pravni-tekst">
+${P.odjeljci.map(([a, b]) => `<div><dt>${a}</dt><dd>${b}</dd></div>`).join("")}
+</dl></div></section>`;
+}
+
+function stranica404() {
+  const linkovi = JEZICI.map((J) => `<a class="dugme prazno" href="/${J.dir}" lang="${J.htmlLang}">${zastava(J.kod)}${J.ime}</a>`).join("");
+  let html = strana(me, "pocetna", `<section class="naslov-strane"><div class="omot"><p class="oznaka">404</p>
+<h1>Ova stranica ne postoji.</h1><p class="uvod">Adresa je možda pogrešno upisana ili je stranica premještena. <span lang="en">This page does not exist.</span></p>
+<div class="akcije jezici-404">${linkovi}</div></div></section>`);
+  html = html.replace(/<title>[^<]*<\/title>/, "<title>Stranica nije pronađena | GeoExpert</title>")
+    .replace(/<link rel="canonical"[^>]*>\n/, "").replace(/<link rel="alternate"[^>]*>\n/g, "")
+    .replace("<head>", '<head>\n<base href="/">\n<meta name="robots" content="noindex">');
+  return html;
+}
+
 function kontakt(L) {
   const K = L.kontakt, F = K.forma, C = L.cta;
   const opcije = L.grupe.flatMap((g) => g.usluge).map((k) => `<option>${L.usluge[k].naziv}</option>`).join("");
@@ -430,8 +457,10 @@ for (const L of JEZICI) {
   upisi(d + L.stranice.usluge, strana(L, "usluge", usluge(L)));
   upisi(d + L.stranice.onama, strana(L, "onama", onama(L)));
   upisi(d + L.stranice.kontakt, strana(L, "kontakt", kontakt(L)));
+  upisi(d + L.stranice.privatnost, strana(L, "privatnost", privatnost(L)));
 }
 if (!PREVIEW) {
+  upisi("404.html", stranica404());
   const urls = [];
   for (const L of JEZICI) for (const k of Object.keys(L.stranice)) urls.push(SITE_URL + "/" + putanja(L, k).replace(/index\.html$/, "").replace(/\.html$/, ""));
   upisi("sitemap.xml", `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map((u) => `  <url><loc>${u}</loc></url>`).join("\n")}\n</urlset>\n`);
