@@ -9,7 +9,7 @@ export const firma = {
   viber: "viber://chat?number=%2B38268007108",
   whatsapp: "https://wa.me/38268007108",
   mapa: "https://www.google.com/maps/search/?api=1&query=GeoExpert%2C+13.+jul+9%2C+Podgorica&query_place_id=ChIJ91XTJxLrTRMRIqv1ZOd0TGE",
-  klijenti: ["Petrol", "Portonovi Montenegro", "Crnogorski Telekom", "Rokšped Podgorica", "Sinersys"],
+  klijenti: ["Crnogorski Telekom", "Monteput", "Petrol", "Portonovi Montenegro", "One Crna Gora", "Grawe", "Rokšped Podgorica", "Fab Live", "Sinersys"],
 };
 
 export const me = {

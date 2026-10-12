@@ -6,7 +6,8 @@ import { fileURLToPath } from "node:url";
 import { firma, me, en } from "./content.mjs";
 import { de, tr, ru } from "./prevodi.mjs";
 import { dodajDron } from "./dron.mjs";
-const JEZICI = [me, en, de, tr, ru].map(dodajDron);
+import { dodajDopune } from "./dopune.mjs";
+const JEZICI = [me, en, de, tr, ru].map(dodajDron).map(dodajDopune);
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const SITE_URL = process.env.SITE_URL || "https://geoexpert-aes.pages.dev";

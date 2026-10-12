@@ -4,8 +4,8 @@
 const D = {
   me: {
     grupa: "Snimanje dronom",
-    uslugeUvod: "Petnaest usluga u četiri oblasti, od katastra do snimanja dronom. Za svaku pripremamo kompletnu dokumentaciju i objašnjavamo šta slijedi.",
-    brojka: ["15", "usluga u četiri oblasti"],
+    uslugeUvod: "Sedamnaest usluga u četiri oblasti, od katastra do snimanja dronom. Za svaku pripremamo kompletnu dokumentaciju i objašnjavamo šta slijedi.",
+    brojka: ["17", "usluga u četiri oblasti"],
     sekcija: {
       naslov: "Geodezija iz vazduha",
       uvod: "Snimamo teren dronom i od snimka pravimo ortofoto, 3D modele, digitalni model terena i proračune zapremina. Dron ne zamjenjuje geodetu, već mu daje brži način prikupljanja podataka. Snimak vezujemo za kontrolne tačke izmjerene na terenu, pa podaci zadržavaju geodetsku tačnost.",
@@ -42,8 +42,8 @@ const D = {
   },
   en: {
     grupa: "Drone surveying",
-    uslugeUvod: "Fifteen services in four areas, from cadastre to drone surveying. For each one we prepare the full documentation and explain what comes next.",
-    brojka: ["15", "services in four areas"],
+    uslugeUvod: "Seventeen services in four areas, from cadastre to drone surveying. For each one we prepare the full documentation and explain what comes next.",
+    brojka: ["17", "services in four areas"],
     sekcija: {
       naslov: "Surveying from the air",
       uvod: "We survey terrain by drone and turn the imagery into orthophotos, 3D models, digital terrain models and volume calculations. A drone does not replace the surveyor; it gives us a faster way to collect data. Imagery is tied to ground control points measured on site, so the data keeps survey-grade accuracy.",
@@ -80,8 +80,8 @@ const D = {
   },
   de: {
     grupa: "Drohnenvermessung",
-    uslugeUvod: "Fünfzehn Leistungen in vier Bereichen, vom Kataster bis zur Drohnenvermessung. Für jede erstellen wir die vollständigen Unterlagen und erklären, was als Nächstes kommt.",
-    brojka: ["15", "Leistungen in vier Bereichen"],
+    uslugeUvod: "Siebzehn Leistungen in vier Bereichen, vom Kataster bis zur Drohnenvermessung. Für jede erstellen wir die vollständigen Unterlagen und erklären, was als Nächstes kommt.",
+    brojka: ["17", "Leistungen in vier Bereichen"],
     sekcija: {
       naslov: "Vermessung aus der Luft",
       uvod: "Wir befliegen das Gelände mit der Drohne und erstellen daraus Orthofotos, 3D-Modelle, digitale Geländemodelle und Volumenberechnungen. Die Drohne ersetzt nicht den Vermesser, sie gibt ihm einen schnelleren Weg zur Datenerfassung. Die Aufnahmen werden an vor Ort gemessene Passpunkte gebunden, damit die Daten vermessungstechnisch genau bleiben.",
@@ -118,8 +118,8 @@ const D = {
   },
   tr: {
     grupa: "Drone ile ölçüm",
-    uslugeUvod: "Kadastrodan drone ölçümüne, dört alanda on beş hizmet. Her biri için tüm belgeleri hazırlıyor ve sonraki adımları açıklıyoruz.",
-    brojka: ["15", "dört alanda hizmet"],
+    uslugeUvod: "Kadastrodan drone ölçümüne, dört alanda on yedi hizmet. Her biri için tüm belgeleri hazırlıyor ve sonraki adımları açıklıyoruz.",
+    brojka: ["17", "dört alanda hizmet"],
     sekcija: {
       naslov: "Havadan harita ölçümü",
       uvod: "Araziyi drone ile ölçer, görüntülerden ortofoto, 3D model, sayısal arazi modeli ve hacim hesapları üretiriz. Drone haritacının yerini almaz; ona veri toplamanın daha hızlı bir yolunu sunar. Görüntüleri arazide ölçülen yer kontrol noktalarına bağlarız, böylece veriler jeodezik doğruluğunu korur.",
@@ -156,8 +156,8 @@ const D = {
   },
   ru: {
     grupa: "Съёмка с дрона",
-    uslugeUvod: "Пятнадцать услуг в четырёх направлениях, от кадастра до съёмки с дрона. Для каждой мы готовим полный пакет документов и объясняем, что будет дальше.",
-    brojka: ["15", "услуг в четырёх направлениях"],
+    uslugeUvod: "Семнадцать услуг в четырёх направлениях, от кадастра до съёмки с дрона. Для каждой мы готовим полный пакет документов и объясняем, что будет дальше.",
+    brojka: ["17", "услуг в четырёх направлениях"],
     sekcija: {
       naslov: "Геодезия с воздуха",
       uvod: "Мы снимаем местность с дрона и делаем из снимков ортофотоплан, 3D-модели, цифровую модель рельефа и расчёты объёмов. Дрон не заменяет геодезиста, а даёт ему более быстрый способ сбора данных. Снимки привязываются к опорным точкам, измеренным на месте, поэтому данные сохраняют геодезическую точность.",
