@@ -141,6 +141,15 @@ function dronBlok(L) {
 </div></section>`;
 }
 
+/* ---------- pravni podaci firme (CRPS / CompanyWall) ---------- */
+const PRAVNO = { naziv: "GEO EXPERT d.o.o. Podgorica", pib: "02934094", pdv: "30/31-15825-6", reg: "5-0662458/003", osnovano: "2013-05-29" };
+const PRAVNO_OZNAKE = {
+  me: ["PIB", "PDV", "Reg. br."], en: ["Tax ID", "VAT", "Reg. no."], de: ["Steuer-Nr.", "USt-Nr.", "Reg.-Nr."],
+  tr: ["Vergi no", "KDV no", "Sicil no"], ru: ["ИНН", "НДС", "Рег. №"],
+};
+const pravniRed = (L) => { const o = PRAVNO_OZNAKE[L.lang] || PRAVNO_OZNAKE.en;
+  return `<span class="pravno">${PRAVNO.naziv} <i>·</i> ${o[0]} ${PRAVNO.pib} <i>·</i> ${o[1]} ${PRAVNO.pdv} <i>·</i> ${o[2]} ${PRAVNO.reg}</span>`; };
+
 /* ---------- dijelovi ---------- */
 const ikViber = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3C7 3 3.5 5.9 3.5 10.6c0 2.6 1.1 4.5 3 5.7V20l3.1-2.4c.8.1 1.6.2 2.4.2 5 0 8.5-2.9 8.5-7.2S17 3 12 3z" fill="none" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/><path d="M9.3 7.9c.3-.3.7-.3.9 0l.8 1.1c.2.3.2.6-.1.9l-.4.4c.4.9 1.1 1.6 2 2l.4-.4c.3-.3.6-.3.9-.1l1.1.8c.3.2.3.6 0 .9l-.5.5c-.5.5-1.3.6-2 .3-1.7-.8-3-2.1-3.8-3.8-.3-.7-.2-1.5.3-2z" fill="#fff"/></svg>`;
 const ikWa = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5a8.5 8.5 0 0 0-7.3 12.8L3.5 20.5l4.3-1.1A8.5 8.5 0 1 0 12 3.5z" fill="none" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/><path d="M9.3 7.9c.3-.3.7-.3.9 0l.8 1.1c.2.3.2.6-.1.9l-.4.4c.4.9 1.1 1.6 2 2l.4-.4c.3-.3.6-.3.9-.1l1.1.8c.3.2.3.6 0 .9l-.5.5c-.5.5-1.3.6-2 .3-1.7-.8-3-2.1-3.8-3.8-.3-.7-.2-1.5.3-2z" fill="#fff"/></svg>`;
@@ -169,7 +178,7 @@ ${PREVIEW ? `<link rel="stylesheet" href="https://fonts.googleapis.com/css2?fami
 <link rel="stylesheet" href="${p}assets/site.css?v=${V.css}">
 <script>document.documentElement.classList.add("js")</script>
 <script type="application/ld+json">${JSON.stringify({
-    "@context": "https://schema.org", "@type": "ProfessionalService", name: "GeoExpert",
+    "@context": "https://schema.org", "@type": "ProfessionalService", name: "GeoExpert", legalName: "GEO EXPERT d.o.o.", taxID: "02934094", vatID: "30/31-15825-6", foundingDate: "2013-05-29",
     description: L.meta.pocetna[1], url: SITE_URL, telephone: firma.tel1href, email: firma.email,
     address: { "@type": "PostalAddress", streetAddress: "13. jul br. 9", postalCode: "81000", addressLocality: "Podgorica", addressCountry: "ME" },
     geo: { "@type": "GeoCoordinates", latitude: 42.4450711, longitude: 19.2553269 },
@@ -228,7 +237,7 @@ function podnozje(L) {
 <div><h4>${F.radno}</h4><span>${F.radno1}</span><br><span>${F.radno2}</span></div>
 </div>
 <div class="veliki-znak" aria-hidden="true">${logoSvg}</div>
-<div class="dno"><span>© 2026 GeoExpert</span><span>${L.drzava}</span></div>
+<div class="dno"><span>© 2026 GeoExpert</span>${pravniRed(L)}<span>${L.drzava}</span></div>
 </div></footer>`;
 }
 
