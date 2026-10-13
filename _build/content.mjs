@@ -48,7 +48,7 @@ export const me = {
   },
   stav: {
     naslov: "Geodezija je obično samo jedan korak u većem poslu.",
-    izjava: "Gradnja, legalizacija, prodaja ili podjela imovine. Zato ne predajemo samo mjerenje, već vas vodimo kroz cijeli postupak i objašnjavamo svaki korak.",
+    izjava: "Gradnja, legalizacija ili podjela imovine. Zato ne predajemo samo mjerenje, već vas vodimo kroz cijeli postupak i objašnjavamo svaki korak.",
     principi: [
       ["Tačnost", "Svako mjerenje provjeravamo prije nego što postane dio elaborata."],
       ["Jasna komunikacija", "Unaprijed znate šta je potrebno, koliko traje i šta slijedi."],
@@ -126,7 +126,7 @@ export const me = {
     naslov: "Geodetska firma koja vodi predmet do kraja.",
     uvod: "GeoExpert radi u Podgorici više od 13 godina. Bavimo se katastarskim i geodetskim poslovima za vlasnike, investitore i kompanije, na terenu širom Crne Gore.",
     tekst: [
-      "Geodetski poslovi rijetko stoje sami. Iza mjerenja je obično gradnja, legalizacija, prodaja ili podjela imovine. Zato klijentu ne predajemo samo elaborat, već objašnjavamo šta znači i šta slijedi.",
+      "Geodetski poslovi rijetko stoje sami. Iza mjerenja je obično gradnja, legalizacija ili podjela imovine. Zato klijentu ne predajemo samo elaborat, već objašnjavamo šta znači i šta slijedi.",
       "Svako mjerenje provjeravamo prije nego što uđe u elaborat. Rokove dogovaramo realno i držimo ih, a predmet pratimo u katastru do upisa.",
     ],
     zaKoga: "Za koga radimo",
@@ -176,7 +176,7 @@ export const en = {
   },
   stav: {
     naslov: "Surveying is usually one step in a bigger job.",
-    izjava: "Building, legalisation, a sale or dividing property. So we don't just hand over measurements. We guide you through the whole procedure and explain each step.",
+    izjava: "Building, legalisation or dividing property. So we don't just hand over measurements. We guide you through the whole procedure and explain each step.",
     principi: [
       ["Accuracy", "Every measurement is checked before it goes into a survey report."],
       ["Clear communication", "You know in advance what is needed, how long it takes and what comes next."],
@@ -254,7 +254,7 @@ export const en = {
     naslov: "A surveying firm that sees each case through.",
     uvod: "GeoExpert has worked in Podgorica for more than 13 years. We handle cadastral and survey work for owners, developers and companies across Montenegro.",
     tekst: [
-      "Survey work rarely stands alone. Behind a measurement there is usually construction, legalisation, a sale or a division of property. So we don't just hand over a report; we explain what it means and what comes next.",
+      "Survey work rarely stands alone. Behind a measurement there is usually construction, legalisation or a division of property. So we don't just hand over a report; we explain what it means and what comes next.",
       "Every measurement is checked before it goes into a report. We agree realistic deadlines, keep them, and follow the case at the cadastre until it is registered.",
     ],
     zaKoga: "Who we work for",

@@ -33,7 +33,7 @@ export const de = {
   },
   stav: {
     naslov: "Vermessung ist meist nur ein Schritt in einem größeren Vorhaben.",
-    izjava: "Bauen, Legalisieren, Verkaufen oder Teilen von Eigentum. Deshalb liefern wir nicht nur Messwerte, sondern begleiten Sie durch das ganze Verfahren und erklären jeden Schritt.",
+    izjava: "Bauen, Legalisieren oder Teilen von Eigentum. Deshalb liefern wir nicht nur Messwerte, sondern begleiten Sie durch das ganze Verfahren und erklären jeden Schritt.",
     principi: [
       ["Genauigkeit", "Jede Messung wird geprüft, bevor sie in den Vermessungsbericht eingeht."],
       ["Klare Kommunikation", "Sie wissen vorab, was nötig ist, wie lange es dauert und was als Nächstes kommt."],
@@ -110,7 +110,7 @@ export const de = {
     naslov: "Ein Vermessungsbüro, das jeden Auftrag zu Ende führt.",
     uvod: "GeoExpert arbeitet seit mehr als 13 Jahren in Podgorica. Wir übernehmen Kataster- und Vermessungsarbeiten für Eigentümer, Bauträger und Unternehmen in ganz Montenegro.",
     tekst: [
-      "Vermessung steht selten für sich allein. Hinter einer Messung steht meist ein Bau, eine Legalisierung, ein Verkauf oder eine Teilung. Deshalb übergeben wir nicht nur einen Bericht, sondern erklären, was er bedeutet und was folgt.",
+      "Vermessung steht selten für sich allein. Hinter einer Messung steht meist ein Bau, eine Legalisierung oder eine Teilung. Deshalb übergeben wir nicht nur einen Bericht, sondern erklären, was er bedeutet und was folgt.",
       "Jede Messung wird geprüft, bevor sie in einen Bericht eingeht. Wir vereinbaren realistische Fristen, halten sie ein und begleiten den Auftrag beim Kataster bis zur Eintragung.",
     ],
     zaKoga: "Für wen wir arbeiten",
@@ -156,7 +156,7 @@ export const tr = {
   },
   stav: {
     naslov: "Ölçüm genellikle daha büyük bir işin tek adımıdır.",
-    izjava: "İnşaat, yasallaştırma, satış ya da mülk paylaşımı. Bu yüzden yalnızca ölçüm teslim etmiyoruz; tüm süreç boyunca size eşlik ediyor ve her adımı açıklıyoruz.",
+    izjava: "İnşaat, yasallaştırma ya da mülk paylaşımı. Bu yüzden yalnızca ölçüm teslim etmiyoruz; tüm süreç boyunca size eşlik ediyor ve her adımı açıklıyoruz.",
     principi: [
       ["Doğruluk", "Her ölçüm rapora girmeden önce kontrol edilir."],
       ["Açık iletişim", "Neyin gerektiğini, ne kadar süreceğini ve sonrasında ne olacağını önceden bilirsiniz."],
@@ -233,7 +233,7 @@ export const tr = {
     naslov: "Her dosyayı sonuna kadar takip eden bir harita firması.",
     uvod: "GeoExpert 13 yılı aşkın süredir Podgorica'da çalışıyor. Karadağ genelinde mülk sahipleri, müteahhitler ve şirketler için kadastro ve ölçüm işleri yapıyoruz.",
     tekst: [
-      "Ölçüm işleri nadiren tek başınadır. Bir ölçümün arkasında genellikle inşaat, yasallaştırma, satış ya da mülk paylaşımı vardır. Bu yüzden yalnızca rapor teslim etmiyor, ne anlama geldiğini ve sonrasını açıklıyoruz.",
+      "Ölçüm işleri nadiren tek başınadır. Bir ölçümün arkasında genellikle inşaat, yasallaştırma ya da mülk paylaşımı vardır. Bu yüzden yalnızca rapor teslim etmiyor, ne anlama geldiğini ve sonrasını açıklıyoruz.",
       "Her ölçüm rapora girmeden önce kontrol edilir. Gerçekçi süreler belirler, onlara uyar ve dosyayı kadastroda tescile kadar takip ederiz.",
     ],
     zaKoga: "Kimler için çalışıyoruz",
@@ -279,7 +279,7 @@ export const ru = {
   },
   stav: {
     naslov: "Геодезия обычно лишь один шаг в большом деле.",
-    izjava: "Строительство, легализация, продажа или раздел имущества. Поэтому мы не просто передаём измерения, а сопровождаем вас на всём пути и объясняем каждый шаг.",
+    izjava: "Строительство, легализация или раздел имущества. Поэтому мы не просто передаём измерения, а сопровождаем вас на всём пути и объясняем каждый шаг.",
     principi: [
       ["Точность", "Каждое измерение проверяется, прежде чем попасть в отчёт."],
       ["Понятное общение", "Вы заранее знаете, что нужно, сколько это займёт и что будет дальше."],
@@ -356,7 +356,7 @@ export const ru = {
     naslov: "Геодезическая компания, которая доводит дело до конца.",
     uvod: "GeoExpert работает в Подгорице более 13 лет. Мы выполняем кадастровые и геодезические работы для владельцев, застройщиков и компаний по всей Черногории.",
     tekst: [
-      "Геодезия редко бывает сама по себе. За измерением обычно стоит строительство, легализация, продажа или раздел имущества. Поэтому мы не просто сдаём отчёт, а объясняем, что он значит и что будет дальше.",
+      "Геодезия редко бывает сама по себе. За измерением обычно стоит строительство, легализация или раздел имущества. Поэтому мы не просто сдаём отчёт, а объясняем, что он значит и что будет дальше.",
       "Каждое измерение проверяется, прежде чем попасть в отчёт. Мы согласуем реальные сроки, соблюдаем их и ведём дело в кадастре до регистрации.",
     ],
     zaKoga: "Для кого мы работаем",
