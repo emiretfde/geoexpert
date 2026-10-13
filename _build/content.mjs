@@ -5,7 +5,7 @@ export const firma = {
   adresaEn: "13. jul 9, 81000 Podgorica, Montenegro",
   tel1: "+382 68 007 108", tel1href: "+38268007108",
   tel2: "+382 67 339 259", tel2href: "+38267339259",
-  email: "geoexpertpg@gmail.com",
+  email: "info@geoexpert.me",
   viber: "viber://chat?number=%2B38268007108",
   whatsapp: "https://wa.me/38268007108",
   mapa: "https://www.google.com/maps/search/?api=1&query=GeoExpert%2C+13.+jul+9%2C+Podgorica&query_place_id=ChIJ91XTJxLrTRMRIqv1ZOd0TGE",
@@ -21,7 +21,7 @@ export const me = {
     pocetna: ["GeoExpert | Geodetske usluge u Podgorici", "GeoExpert, Podgorica: legalizacija objekata, dioba parcela, geodetske podloge i upis u katastar. Više od 13 godina iskustva na terenu širom Crne Gore."],
     usluge: ["Usluge | GeoExpert Podgorica", "Dioba parcela, legalizacija, etažna razrada, geodetske podloge, uknjižba objekata i imovinsko-pravno savjetovanje."],
     onama: ["O nama | GeoExpert Podgorica", "Geodetska firma iz Podgorice sa više od 13 godina iskustva u katastarskim i geodetskim poslovima."],
-    kontakt: ["Kontakt | GeoExpert Podgorica", "Pozovite +382 68 007 108 ili pišite na geoexpertpg@gmail.com. 13. jul br. 9, Podgorica."],
+    kontakt: ["Kontakt | GeoExpert Podgorica", "Pozovite +382 68 007 108 ili pišite na info@geoexpert.me. 13. jul br. 9, Podgorica."],
   },
   hero: {
     naslov: "Svaka granica, izmjerena i upisana.",
@@ -149,7 +149,7 @@ export const en = {
     pocetna: ["GeoExpert | Land surveying in Podgorica, Montenegro", "GeoExpert, Podgorica: building legalisation, parcel subdivision, survey plans for design and cadastral registration. Over 13 years of fieldwork across Montenegro."],
     usluge: ["Services | GeoExpert Montenegro", "Parcel subdivision, legalisation surveys, condominium plans, topographic surveys for design, building registration and property advice."],
     onama: ["About | GeoExpert Montenegro", "A land surveying firm in Podgorica with more than 13 years of cadastral and survey work."],
-    kontakt: ["Contact | GeoExpert Montenegro", "Call +382 68 007 108 or write to geoexpertpg@gmail.com. 13. jul 9, Podgorica."],
+    kontakt: ["Contact | GeoExpert Montenegro", "Call +382 68 007 108 or write to info@geoexpert.me. 13. jul 9, Podgorica."],
   },
   hero: {
     naslov: "Every boundary, measured and registered.",

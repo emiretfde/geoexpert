@@ -10,7 +10,7 @@ export const de = {
     pocetna: ["GeoExpert | Vermessung in Podgorica, Montenegro", "GeoExpert, Podgorica: Legalisierung von Gebäuden, Grundstücksteilung, Vermessungspläne und Eintragung ins Kataster. Über 13 Jahre Erfahrung in ganz Montenegro."],
     usluge: ["Leistungen | GeoExpert Montenegro", "Grundstücksteilung, Legalisierungsvermessung, Aufteilungspläne, Bestandspläne für die Planung, Gebäudeeinmessung und Eigentumsberatung."],
     onama: ["Über uns | GeoExpert Montenegro", "Vermessungsbüro in Podgorica mit mehr als 13 Jahren Erfahrung im Kataster- und Vermessungswesen."],
-    kontakt: ["Kontakt | GeoExpert Montenegro", "Rufen Sie +382 68 007 108 an oder schreiben Sie an geoexpertpg@gmail.com. 13. jul 9, Podgorica."],
+    kontakt: ["Kontakt | GeoExpert Montenegro", "Rufen Sie +382 68 007 108 an oder schreiben Sie an info@geoexpert.me. 13. jul 9, Podgorica."],
   },
   hero: {
     naslov: "Jede Grenze, vermessen und eingetragen.",
@@ -133,7 +133,7 @@ export const tr = {
     pocetna: ["GeoExpert | Podgorica, Karadağ'da harita ve kadastro hizmetleri", "GeoExpert, Podgorica: yapı yasallaştırma, parsel ifrazı, proje için halihazır harita ve kadastro tescili. Karadağ genelinde 13 yılı aşkın deneyim."],
     usluge: ["Hizmetler | GeoExpert Karadağ", "Parsel ifrazı, yasallaştırma ölçümü, kat mülkiyeti planı, halihazır harita, bina tescili ve mülkiyet danışmanlığı."],
     onama: ["Hakkımızda | GeoExpert Karadağ", "Kadastro ve ölçüm işlerinde 13 yılı aşkın deneyime sahip Podgorica merkezli harita firması."],
-    kontakt: ["İletişim | GeoExpert Karadağ", "+382 68 007 108 numarasını arayın veya geoexpertpg@gmail.com adresine yazın. 13. jul 9, Podgorica."],
+    kontakt: ["İletişim | GeoExpert Karadağ", "+382 68 007 108 numarasını arayın veya info@geoexpert.me adresine yazın. 13. jul 9, Podgorica."],
   },
   hero: {
     naslov: "Her sınır, ölçülmüş ve tescil edilmiş.",
@@ -256,7 +256,7 @@ export const ru = {
     pocetna: ["GeoExpert | Геодезия и кадастр в Подгорице, Черногория", "GeoExpert, Подгорица: легализация зданий, раздел участков, топосъёмка для проектирования и регистрация в кадастре. Более 13 лет работы по всей Черногории."],
     usluge: ["Услуги | GeoExpert Черногория", "Раздел участков, съёмка для легализации, поэтажный план, топосъёмка, регистрация зданий и консультации по недвижимости."],
     onama: ["О нас | GeoExpert Черногория", "Геодезическая компания из Подгорицы с опытом кадастровых и геодезических работ более 13 лет."],
-    kontakt: ["Контакты | GeoExpert Черногория", "Звоните +382 68 007 108 или пишите на geoexpertpg@gmail.com. 13. jul 9, Подгорица."],
+    kontakt: ["Контакты | GeoExpert Черногория", "Звоните +382 68 007 108 или пишите на info@geoexpert.me. 13. jul 9, Подгорица."],
   },
   hero: {
     naslov: "Каждая граница измерена и зарегистрирована.",
