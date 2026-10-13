@@ -383,9 +383,17 @@
     var softver = !!gpu && /swiftshader|llvmpipe|softpipe|software|basic render/i.test(gpu);
     if (gpu === null || !window.THREE || !webglOblak(softver)) oblak2D(false);
   };
+  // three.js se učitava tek kad je stranica učitana i preglednik slobodan, da ne usporava prvi prikaz
   if (platno) {
-    if (window.THREE) pokreniOblak();
-    else window.addEventListener("load", pokreniOblak);
+    var ucitajOblak = function () {
+      if (window.THREE || !window.TRI_URL) { pokreniOblak(); return; }
+      var s = document.createElement("script");
+      s.src = window.TRI_URL; s.async = true;
+      s.onload = s.onerror = pokreniOblak;
+      document.head.appendChild(s);
+    };
+    var kadSlobodno = function () { (window.requestIdleCallback || function (f) { setTimeout(f, 300); })(ucitajOblak, { timeout: 2000 }); };
+    if (document.readyState === "complete") kadSlobodno(); else window.addEventListener("load", kadSlobodno);
   }
 
   /* dijagnostika: otvoriti stranicu s #dijag na kraju adrese */
@@ -492,8 +500,15 @@
         ctx.stroke();
       }
     };
-    var sve = function () { platna.forEach(nacrtaj); };
-    sve();
+    // crta se tek kad se korisnik približi, da ne opterećuje učitavanje stranice
+    var nacrtano = new Set();
+    var sve = function () { nacrtano.forEach(nacrtaj); };
+    if ("IntersectionObserver" in window) {
+      var ioI = new IntersectionObserver(function (u) {
+        u.forEach(function (e) { if (e.isIntersecting && !nacrtano.has(e.target)) { nacrtano.add(e.target); nacrtaj(e.target); ioI.unobserve(e.target); } });
+      }, { rootMargin: "400px 0px" });
+      platna.forEach(function (c) { ioI.observe(c); });
+    } else { platna.forEach(function (c) { nacrtano.add(c); }); sve(); }
     var tajmer;
     window.addEventListener("resize", function () { clearTimeout(tajmer); tajmer = setTimeout(sve, 200); });
   }

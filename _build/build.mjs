@@ -214,7 +214,7 @@ function jezikMob(L, kljuc) {
   const ostali = JEZICI.filter((J) => J !== L).map((J) =>
     `<li><a href="${prefiks(L)}${putanja(J, kljuc)}" hreflang="${J.htmlLang}" lang="${J.htmlLang}">${zastava(J.kod)}<span>${J.ime}</span></a></li>`).join("");
   return `<div class="jezik-mob">
-<button class="jezik-dugme" type="button" aria-expanded="false" aria-controls="jezik-lista" aria-label="${L.jezikLabel}: ${L.ime}">${zastava(L.kod)}<span>${L.kod}</span><svg class="strelica-dolje" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.4"/></svg></button>
+<button class="jezik-dugme" type="button" aria-expanded="false" aria-controls="jezik-lista" aria-label="${L.kod} – ${L.jezikLabel}: ${L.ime}">${zastava(L.kod)}<span>${L.kod}</span><svg class="strelica-dolje" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.4"/></svg></button>
 <ul class="jezik-lista" id="jezik-lista" hidden>${ostali}</ul>
 </div>`;
 }
@@ -240,9 +240,9 @@ function podnozje(L) {
   return `<footer class="podnozje"><div class="omot">
 <div class="kolone">
 <div>${logo(L)}<p style="margin-top:18px">${F.opis}</p></div>
-<div><h4>${F.stranice}</h4><a href="${L.stranice.pocetna}">GeoExpert</a><a href="${L.stranice.usluge}">${L.nav.usluge}</a><a href="${L.stranice.onama}">${L.nav.onama}</a><a href="${L.stranice.kontakt}">${L.nav.kontakt}</a><a href="${L.stranice.privatnost}">${L.privatnost.link}</a></div>
-<div><h4>${F.kontakt}</h4><a href="${firma.mapa}" target="_blank" rel="noopener">${L.adresa}</a><a href="mailto:${firma.email}">${firma.email}</a><a class="broj" href="tel:${firma.tel1href}">${firma.tel1}</a><a class="broj" href="tel:${firma.tel2href}">${firma.tel2}</a></div>
-<div><h4>${F.radno}</h4><span>${F.radno1}</span><br><span>${F.radno2}</span></div>
+<div><h2 class="podnozje-naslov">${F.stranice}</h2><a href="${L.stranice.pocetna}">GeoExpert</a><a href="${L.stranice.usluge}">${L.nav.usluge}</a><a href="${L.stranice.onama}">${L.nav.onama}</a><a href="${L.stranice.kontakt}">${L.nav.kontakt}</a><a href="${L.stranice.privatnost}">${L.privatnost.link}</a></div>
+<div><h2 class="podnozje-naslov">${F.kontakt}</h2><a href="${firma.mapa}" target="_blank" rel="noopener">${L.adresa}</a><a href="mailto:${firma.email}">${firma.email}</a><a class="broj" href="tel:${firma.tel1href}">${firma.tel1}</a><a class="broj" href="tel:${firma.tel2href}">${firma.tel2}</a></div>
+<div><h2 class="podnozje-naslov">${F.radno}</h2><span>${F.radno1}</span><br><span>${F.radno2}</span></div>
 </div>
 <div class="veliki-znak" aria-hidden="true">${logoSvg}</div>
 <div class="dno"><span>© 2026 GeoExpert</span>${pravniRed(L)}<span>${L.drzava}</span></div>
@@ -445,11 +445,11 @@ ${kontaktDugmad(L, false)}
 }
 
 /* ---------- upis ---------- */
-const THREE = PREVIEW ? `<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>\n` : null;
+const THREE = PREVIEW ? `<script>window.TRI_URL="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"</script>\n` : null;
 const upisi = (rel, html) => { const f = join(OUT, rel); mkdirSync(dirname(f), { recursive: true }); writeFileSync(f, html); };
 for (const L of JEZICI) {
   const d = L.dir;
-  upisi(d + L.stranice.pocetna, strana(L, "pocetna", pocetna(L), THREE || `<script src="${prefiks(L)}assets/vendor/three.min.js" defer></script>\n`));
+  upisi(d + L.stranice.pocetna, strana(L, "pocetna", pocetna(L), THREE || `<script>window.TRI_URL="${prefiks(L)}assets/vendor/three.min.js"</script>\n`));
   upisi(d + L.stranice.usluge, strana(L, "usluge", usluge(L)));
   upisi(d + L.stranice.onama, strana(L, "onama", onama(L)));
   upisi(d + L.stranice.kontakt, strana(L, "kontakt", kontakt(L)));
