@@ -482,3 +482,13 @@ p { margin: 0; max-width: 62ch; }
 .mapa-link:hover .mapa-dugme { border-color: var(--pijesak); color: var(--pijesak); }
 .mapa-link:focus-visible { outline-offset: -4px; }
 @media (max-width: 560px) { .mapa-link { flex-direction: column; align-items: flex-start; } .mapa-dugme { align-self: stretch; justify-content: center; } }
+
+/* dron: 3D snimanje (kad WebGL radi; inače ostaje 2D plan leta) */
+.dron-plan .unutra { aspect-ratio: 600 / 420; }
+.dron-3d { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.dron-plan.ima-3d .plan-leta { visibility: hidden; }
+.dron-hud { position: absolute; left: 16px; top: 14px; display: flex; align-items: center; gap: 8px; font-size: .75rem; letter-spacing: .08em; color: rgba(236, 232, 223, .7); font-variant-numeric: tabular-nums; pointer-events: none; }
+.dron-hud b { color: var(--tekst); font-weight: 500; letter-spacing: 0; }
+.dron-hud .rec { width: 7px; height: 7px; border-radius: 50%; background: var(--novo); animation: rec 1.2s steps(2, jump-none) infinite; }
+.dron-hud.gotovo .rec { background: var(--pijesak); animation: none; }
+@keyframes rec { 50% { opacity: .2; } }

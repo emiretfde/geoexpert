@@ -383,13 +383,197 @@
     var softver = !!gpu && /swiftshader|llvmpipe|softpipe|software|basic render/i.test(gpu);
     if (gpu === null || !window.THREE || !webglOblak(softver)) oblak2D(false);
   };
+  /* ---------- dron: 3D snimanje terena (zamjenjuje 2D plan leta kad WebGL radi) ---------- */
+  var dronOkvir = document.querySelector(".dron-plan .unutra");
+  var pokreniDron = function () {
+    if (!dronOkvir || redukovano || !window.THREE) return;
+    var gpu = infoGPU();
+    if (!gpu || (/swiftshader|llvmpipe|softpipe|software|basic render/i.test(gpu) && location.hash !== "#dijag")) return; // slabiji uređaji zadržavaju 2D plan
+    var THREE = window.THREE;
+    var c = document.createElement("canvas");
+    c.className = "dron-3d"; c.setAttribute("aria-hidden", "true");
+    var renderer;
+    try { renderer = new THREE.WebGLRenderer({ canvas: c, antialias: true, alpha: true }); } catch (e) { return; }
+    dronOkvir.appendChild(c);
+    var hud = document.createElement("div");
+    hud.className = "dron-hud"; hud.setAttribute("aria-hidden", "true");
+    hud.innerHTML = '<span class="rec"></span>REC <b>0 %</b>';
+    dronOkvir.appendChild(hud);
+    var hudB = hud.querySelector("b");
+    dronOkvir.parentNode.classList.add("ima-3d");
+
+    var mob = window.innerWidth < 760;
+    var NX = mob ? 110 : 150, NZ = mob ? 76 : 104, SX = 220, SZ = 152;
+    var REDOVA = 7, S = 20, Z0 = -60, XA = -100, XB = 100, VIS = 36;
+    var teren = function (x, z) {
+      var n = fbm(x * 0.012 + 5, z * 0.012 + 1);
+      var gr = 1 - Math.abs(2 * fbm(x * 0.03 + 8, z * 0.03 + 3) - 1);
+      return 22 * n + 12 * gr * gr + 1.6 * fbm(x * 0.08, z * 0.08) - 14;
+    };
+    var uk = NX * NZ, poz = new Float32Array(uk * 3), boje = new Float32Array(uk * 3), sl = new Float32Array(uk);
+    var rampa = [[0, [0.20, 0.40, 0.44]], [0.35, [0.30, 0.52, 0.52]], [0.6, [0.62, 0.62, 0.50]], [0.82, [0.86, 0.71, 0.44]], [1, [0.96, 0.93, 0.86]]];
+    var k = 0, mn = 1e9, mx = -1e9, hs = new Float32Array(uk);
+    for (var iz = 0; iz < NZ; iz++) for (var ix = 0; ix < NX; ix++) {
+      var x = (ix / (NX - 1) - 0.5) * SX + (rnd() - 0.5) * 0.5, z = (iz / (NZ - 1) - 0.5) * SZ + (rnd() - 0.5) * 0.5;
+      var h = teren(x, z); hs[k] = h; mn = Math.min(mn, h); mx = Math.max(mx, h);
+      poz[k * 3] = x; poz[k * 3 + 1] = h; poz[k * 3 + 2] = z; sl[k] = rnd(); k++;
+    }
+    for (k = 0; k < uk; k++) {
+      var tt = (hs[k] - mn) / (mx - mn);
+      for (var r = 1; r < rampa.length; r++) if (tt <= rampa[r][0]) {
+        var a = rampa[r - 1], b = rampa[r], q = (tt - a[0]) / (b[0] - a[0]);
+        for (var cc = 0; cc < 3; cc++) boje[k * 3 + cc] = a[1][cc] + (b[1][cc] - a[1][cc]) * q;
+        break;
+      }
+    }
+    var geo = new THREE.BufferGeometry();
+    geo.setAttribute("position", new THREE.BufferAttribute(poz, 3));
+    geo.setAttribute("color", new THREE.BufferAttribute(boje, 3));
+    geo.setAttribute("rnd", new THREE.BufferAttribute(sl, 1));
+    var pr = Math.min(window.devicePixelRatio || 1, 1.75);
+    var uni = { uRed: { value: 0 }, uDX: { value: XA }, uDZ: { value: Z0 }, uSmjer: { value: 1 }, uSkenira: { value: 1 }, uFade: { value: 1 }, uPR: { value: pr } };
+    var mat = new THREE.ShaderMaterial({
+      uniforms: uni, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, vertexColors: true,
+      vertexShader: [
+        "attribute float rnd; uniform float uRed, uDX, uDZ, uSmjer, uSkenira, uFade, uPR;",
+        "varying vec3 vC; varying float vA;",
+        "void main(){",
+        " vec4 mv = modelViewMatrix * vec4(position, 1.0);",
+        " float red = floor((position.z - " + Z0.toFixed(1) + ") / " + S.toFixed(1) + " + 0.5);",
+        " float preso = step(red + 0.5, uRed);",
+        " float isti = step(abs(red - uRed), 0.5);",
+        " float prosao = uSmjer > 0.0 ? step(position.x, uDX) : step(uDX, position.x);",
+        " float snimljeno = max(preso, isti * prosao * uSkenira);",
+        " float otisak = (1.0 - smoothstep(8.0, 11.0, abs(position.x - uDX))) * (1.0 - smoothstep(12.0, 15.0, abs(position.z - uDZ))) * uSkenira;",
+        " vec3 sivo = vec3(0.34, 0.44, 0.48);",
+        " vC = mix(sivo, color, snimljeno);",
+        " vC = mix(vC * (1.0 + snimljeno * 0.25), vec3(1.0, 0.9, 0.66), otisak * 0.6);",
+        " vA = (mix(0.2, 0.95, snimljeno) * (0.62 + 0.38 * rnd) + otisak * 0.45) * uFade;",
+        " gl_PointSize = (1.6 + snimljeno * 0.7 + otisak * 0.8) * uPR * (250.0 / -mv.z);",
+        " gl_Position = projectionMatrix * mv;",
+        "}"].join("\n"),
+      fragmentShader: [
+        "varying vec3 vC; varying float vA;",
+        "void main(){ vec2 c = gl_PointCoord - 0.5; float r = dot(c, c); if (r > 0.25) discard;",
+        " gl_FragColor = vec4(vC * vA, 1.0) * (1.0 - smoothstep(0.06, 0.25, r)); }"].join("\n")
+    });
+    var scena = new THREE.Scene();
+    scena.add(new THREE.Points(geo, mat));
+    var linMat = function (boja, op) { return new THREE.LineBasicMaterial({ color: boja, transparent: true, opacity: op, blending: THREE.AdditiveBlending, depthWrite: false }); };
+    var linija = function (niz, mat, petlja) {
+      var g = new THREE.BufferGeometry(); g.setAttribute("position", new THREE.BufferAttribute(new Float32Array(niz), 3));
+      var l = petlja ? new THREE.LineLoop(g, mat) : new THREE.Line(g, mat); scena.add(l); return l;
+    };
+
+    // putanja leta (serpentina) na visini leta
+    var put = [], TURN = 8;
+    for (var rr = 0; rr < REDOVA; rr++) {
+      var zr = Z0 + rr * S, lijevo = rr % 2 === 0, x1 = lijevo ? XA : XB, x2 = lijevo ? XB : XA;
+      for (var s = 0; s <= 40; s++) put.push(x1 + (x2 - x1) * s / 40, VIS, zr);
+      if (rr < REDOVA - 1) for (var s2 = 1; s2 < TURN; s2++) { var ug = Math.PI * s2 / TURN, rx = x2 + (lijevo ? 1 : -1) * Math.sin(ug) * 7; put.push(rx, VIS, zr + S * (1 - Math.cos(ug)) / 2); }
+    }
+    linija(put, linMat(0xcbaa6b, 0.16));
+    var trag = linija(put, linMat(0xcbaa6b, 0.75));
+    var ukTacaka = put.length / 3;
+
+    // kontrolne tačke na terenu
+    [[-78, -48], [74, -40], [0, 4], [-70, 46], [80, 50]].forEach(function (p) {
+      var tri = [], y = teren(p[0], p[1]) + 0.6;
+      for (var i = 0; i < 3; i++) { var u = -Math.PI / 2 + i * 2 * Math.PI / 3; tri.push(p[0] + Math.cos(u) * 4.5, y, p[1] + Math.sin(u) * 4.5); }
+      linija(tri, linMat(0xe2574c, 0.95), true);
+    });
+
+    // dron
+    var dron = new THREE.Group(), dMat = linMat(0xece8df, 0.95);
+    var ruke = [], krug = function (cx, cz, r) { var a = []; for (var i = 0; i < 24; i++) { var u = i / 24 * Math.PI * 2; a.push(cx + Math.cos(u) * r, 0, cz + Math.sin(u) * r); } return a; };
+    var dodaj = function (niz, m, petlja) { var g = new THREE.BufferGeometry(); g.setAttribute("position", new THREE.BufferAttribute(new Float32Array(niz), 3)); var l = petlja ? new THREE.LineLoop(g, m) : new THREE.Line(g, m); dron.add(l); return l; };
+    dodaj([-6, 0, -6, 6, 0, 6], dMat); dodaj([6, 0, -6, -6, 0, 6], dMat);
+    var elise = [];
+    [[-6, -6], [6, -6], [-6, 6], [6, 6]].forEach(function (p) {
+      dodaj(krug(p[0], p[1], 3.6), linMat(0xece8df, 0.55), true);
+      var e = dodaj([-3.2, 0.2, 0, 3.2, 0.2, 0], linMat(0xece8df, 0.8)); e.position.set(p[0], 0, p[1]); e.geometry.translate(0, 0, 0); elise.push(e);
+    });
+    var tijelo = new THREE.Mesh(new THREE.BoxGeometry(5, 1.8, 5), new THREE.MeshBasicMaterial({ color: 0xcbaa6b }));
+    dron.add(tijelo);
+    scena.add(dron);
+
+    // snop kamere: od drona do otiska na terenu
+    var snopG = new THREE.BufferGeometry(); snopG.setAttribute("position", new THREE.BufferAttribute(new Float32Array(16 * 3), 3));
+    var snop = new THREE.LineSegments(snopG, linMat(0xcbaa6b, 0.5)); scena.add(snop);
+    var snopP = snopG.attributes.position.array;
+    var postaviSnop = function (dx, dz, dy, vidi) {
+      var ug = [[-10, -13], [10, -13], [10, 13], [-10, 13]], i = 0, kraj = [];
+      ug.forEach(function (u) { kraj.push([dx + u[0], teren(dx + u[0], dz + u[1]) + 0.4, dz + u[1]]); });
+      for (var n = 0; n < 4; n++) { var p = kraj[n], q = kraj[(n + 1) % 4];
+        snopP[i++] = dx; snopP[i++] = dy - 1; snopP[i++] = dz; snopP[i++] = p[0]; snopP[i++] = p[1]; snopP[i++] = p[2];
+        snopP[i++] = p[0]; snopP[i++] = p[1]; snopP[i++] = p[2]; snopP[i++] = q[0]; snopP[i++] = q[1]; snopP[i++] = q[2]; }
+      snopG.attributes.position.needsUpdate = true; snop.visible = vidi;
+    };
+
+    var kamera = new THREE.PerspectiveCamera(34, 1, 1, 900);
+    var velicina = function () {
+      var w = c.clientWidth, h = c.clientHeight; if (!w || !h) return;
+      renderer.setPixelRatio(pr); renderer.setSize(w, h, false);
+      kamera.aspect = w / h; kamera.updateProjectionMatrix();
+      udalj = w / h < 1.2 ? 300 : 258;
+    };
+    var udalj = 258;
+    velicina(); window.addEventListener("resize", velicina);
+
+    // tok misije: red = 2,6 s pravo + 0,7 s okret; na kraju pauza pa iznova
+    var RED_T = 2.6, OKRET_T = 0.7, CIKLUS = REDOVA * RED_T + (REDOVA - 1) * OKRET_T, PAUZA = 2.6, FADE = 0.8;
+    var stanje = function (t) {
+      if (t >= CIKLUS) return { red: REDOVA, x: XB * (REDOVA % 2 ? 1 : -1) , z: Z0 + (REDOVA - 1) * S, sken: 0, napredak: 1, idx: ukTacaka, smjer: 1 };
+      var per = RED_T + OKRET_T, rr = Math.floor(t / per), u = t - rr * per, lijevo = rr % 2 === 0;
+      var x1 = lijevo ? XA : XB, x2 = lijevo ? XB : XA, zr = Z0 + rr * S;
+      var baza = rr * (41 + TURN - 1);
+      if (u < RED_T) {
+        var f = u / RED_T; f = f * f * (3 - 2 * f) * 0.15 + f * 0.85;
+        return { red: rr, x: x1 + (x2 - x1) * f, z: zr, sken: 1, napredak: (rr + f) / REDOVA, idx: baza + Math.round(f * 40), smjer: lijevo ? 1 : -1 };
+      }
+      var g = (u - RED_T) / OKRET_T, ug = Math.PI * g;
+      return { red: rr, x: x2 + (lijevo ? 1 : -1) * Math.sin(ug) * 7, z: zr + S * (1 - Math.cos(ug)) / 2, sken: 0, napredak: (rr + 1) / REDOVA, idx: baza + 41 + Math.round(g * (TURN - 1)), smjer: lijevo ? 1 : -1, okret: true };
+    };
+
+    var aktivan = false, t0 = 0, pom = 0, prosli = 0;
+    var kadar = function (sad) {
+      if (!aktivan) return;
+      if (!t0) t0 = sad;
+      var t = ((sad - t0) / 1000) % (CIKLUS + PAUZA);
+      var st = stanje(t);
+      uni.uRed.value = st.okret ? st.red + 1 : st.red;
+      uni.uDX.value = st.x; uni.uDZ.value = st.z; uni.uSmjer.value = st.smjer; uni.uSkenira.value = st.sken;
+      uni.uFade.value = t > CIKLUS + PAUZA - FADE ? Math.max(0, (CIKLUS + PAUZA - t) / FADE) : (t < FADE * 0.6 ? 0.4 + 0.6 * t / (FADE * 0.6) : 1);
+      trag.geometry.setDrawRange(0, Math.min(ukTacaka, st.idx + 1));
+      var lebdi = Math.sin(sad / 420) * 0.6;
+      dron.position.set(st.x, VIS + lebdi, st.z);
+      dron.rotation.z = -st.smjer * 0.08 * st.sken; dron.rotation.y = st.okret ? 0 : 0;
+      var sk = mob ? 1.25 : 1.1; dron.scale.set(sk, sk, sk);
+      dron.visible = t < CIKLUS + 0.4;
+      elise.forEach(function (e, i) { e.rotation.y = sad / 28 * (i % 2 ? 1 : -1); });
+      postaviSnop(st.x, st.z, VIS + lebdi, st.sken > 0);
+      var ug = 0.32 + Math.sin(sad / 1000 * 0.06) * 0.12;
+      kamera.position.set(Math.sin(ug) * udalj, udalj * 0.95, Math.cos(ug) * udalj);
+      kamera.lookAt(0, -12, 2);
+      renderer.render(scena, kamera);
+      if (sad - prosli > 120) { prosli = sad; hudB.textContent = Math.round(st.napredak * 100) + " %"; hud.classList.toggle("gotovo", st.napredak >= 1); }
+      requestAnimationFrame(kadar);
+    };
+    var vidljivo = false, pokazi = !document.hidden;
+    var osvjezi = function () { var treba = vidljivo && pokazi; if (treba && !aktivan) { aktivan = true; requestAnimationFrame(kadar); } else if (!treba) aktivan = false; };
+    if ("IntersectionObserver" in window) new IntersectionObserver(function (u) { vidljivo = u[0].isIntersecting; osvjezi(); }, { threshold: 0.15 }).observe(c);
+    else { vidljivo = true; osvjezi(); }
+    document.addEventListener("visibilitychange", function () { pokazi = !document.hidden; osvjezi(); });
+  };
+
   // three.js se učitava tek kad je stranica učitana i preglednik slobodan, da ne usporava prvi prikaz
-  if (platno) {
+  if (platno || dronOkvir) {
+    var obaPokreni = function () { if (platno) pokreniOblak(); try { pokreniDron(); } catch (e) {} };
     var ucitajOblak = function () {
-      if (window.THREE || !window.TRI_URL) { pokreniOblak(); return; }
+      if (window.THREE || !window.TRI_URL) { obaPokreni(); return; }
       var s = document.createElement("script");
       s.src = window.TRI_URL; s.async = true;
-      s.onload = s.onerror = pokreniOblak;
+      s.onload = s.onerror = obaPokreni;
       document.head.appendChild(s);
     };
     var kadSlobodno = function () { (window.requestIdleCallback || function (f) { setTimeout(f, 300); })(ucitajOblak, { timeout: 2000 }); };
