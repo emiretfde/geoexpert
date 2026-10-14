@@ -32,6 +32,14 @@
   };
   var fbm = function (x, y) { return sum(x, y) * 0.5 + sum(x * 2.03 + 17, y * 2.03 + 9) * 0.27 + sum(x * 4.1 + 31, y * 4.1 + 5) * 0.15 + sum(x * 8.3 + 3, y * 8.3 + 41) * 0.08; };
 
+  /* ---------- Viber: na telefonu "chat?number" ne otvara razgovor, pa koristimo "add?number" (bez +) ---------- */
+  if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+    document.querySelectorAll('a[href^="viber://chat?number="]').forEach(function (a) {
+      var broj = decodeURIComponent(a.getAttribute("href").split("number=")[1] || "").replace(/[^0-9]/g, "");
+      if (broj) a.setAttribute("href", "viber://add?number=" + broj);
+    });
+  }
+
   /* ---------- zaglavlje ---------- */
   var zag = document.querySelector(".zaglavlje");
   if (zag) {
