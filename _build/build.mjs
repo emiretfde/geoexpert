@@ -446,7 +446,13 @@ ${kontaktDugmad(L, false)}
 
 /* ---------- upis ---------- */
 const THREE = PREVIEW ? `<script>window.TRI_URL="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"</script>\n` : null;
-const upisi = (rel, html) => { const f = join(OUT, rel); mkdirSync(dirname(f), { recursive: true }); writeFileSync(f, html); };
+// Cloudflare Pages servira stranice bez ".html" i preusmjerava sa ".html", pa interni linkovi idu direktno na čiste adrese
+const cisteVeze = (html) => html.replace(/href="([^"#:?]*?)(index)?\.html(#[^"]*)?"/g, (m, put, idx, hash) => {
+  let u = idx ? put : put;
+  if (!idx) return `href="${put}${hash || ""}"`;
+  return `href="${u || "./"}${hash || ""}"`;
+});
+const upisi = (rel, html) => { const f = join(OUT, rel); mkdirSync(dirname(f), { recursive: true }); writeFileSync(f, rel.endsWith(".html") && !PREVIEW ? cisteVeze(html) : html); };
 for (const L of JEZICI) {
   const d = L.dir;
   upisi(d + L.stranice.pocetna, strana(L, "pocetna", pocetna(L), THREE || `<script>window.TRI_URL="${prefiks(L)}assets/vendor/three.min.js"</script>\n`));
@@ -459,7 +465,7 @@ if (!PREVIEW) {
   upisi("404.html", stranica404());
   const urls = [];
   for (const L of JEZICI) for (const k of Object.keys(L.stranice)) urls.push(SITE_URL + "/" + putanja(L, k).replace(/index\.html$/, "").replace(/\.html$/, ""));
-  upisi("sitemap.xml", `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map((u) => `  <url><loc>${u}</loc></url>`).join("\n")}\n</urlset>\n`);
+  upisi("sitemap.xml", `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map((u) => `  <url><loc>${u}</loc><lastmod>${new Date().toISOString().slice(0, 10)}</lastmod></url>`).join("\n")}\n</urlset>\n`);
   upisi("robots.txt", `User-agent: *\nAllow: /\nDisallow: /_build/\nSitemap: ${SITE_URL}/sitemap.xml\n`);
 }
 console.log("Gotovo:", OUT);
