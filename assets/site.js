@@ -86,6 +86,8 @@
     var dno = function () { var d = hero.querySelector(".hero-dole"); return d.getBoundingClientRect().bottom + window.scrollY; };
     var granica = function () { return Math.max(window.innerHeight, 520) - 12; };
     while (dno() > granica() && fs > min && n++ < 40) { fs -= 2; heroH1.style.fontSize = fs + "px"; }
+    // nijedna riječ ne smije biti šira od ekrana (naslov se ne dijeli crticom)
+    while (heroH1.scrollWidth > heroH1.clientWidth + 1 && fs > 20 && n++ < 60) { fs -= 1; heroH1.style.fontSize = fs + "px"; }
   };
   if (heroH1) {
     uklopi();

@@ -114,7 +114,8 @@ p { margin: 0; max-width: 62ch; }
 .hero-dole { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: clamp(18px, 3vh, 32px) 64px; align-items: end; }
 .hero-dole .desno { display: grid; gap: clamp(18px, 3.4vh, 32px); }
 .hero .uvod { font-size: clamp(1rem, min(1.4vw, 2.3svh), 1.25rem); }
-.hero h1 { text-shadow: 0 2px 40px rgba(9, 17, 23, .6); }
+.hero h1 { text-shadow: 0 2px 40px rgba(9, 17, 23, .6); hyphens: manual; -webkit-hyphens: manual; overflow-wrap: normal; }
+.hero .uvod { text-shadow: 0 1px 14px rgba(9, 17, 23, .9), 0 0 2px rgba(9, 17, 23, .8); }
 .hero .potpis { position: absolute; right: var(--gutter); bottom: 14px; font-size: .75rem; color: rgba(143, 155, 162, .7); }
 .hero .nadol { font-size: var(--t-1); color: var(--tiho); display: inline-flex; gap: 10px; align-items: center; }
 .hero .nadol span { width: 1px; height: 36px; background: linear-gradient(var(--pijesak), transparent); display: inline-block; }
@@ -124,6 +125,8 @@ p { margin: 0; max-width: 62ch; }
   .hero-dole { grid-template-columns: 1fr; }
   .ocitavanje { display: none; }
   .hero .potpis { display: none; }
+  /* zatamnjenje donjeg dijela da tekst ostane čitljiv preko animacije */
+  .hero::after { content: ""; position: absolute; inset: 38% 0 0 0; z-index: -1; pointer-events: none; background: linear-gradient(to bottom, rgba(9, 17, 23, 0) 0%, rgba(9, 17, 23, .72) 38%, rgba(9, 17, 23, .9) 100%); }
 }
 
 /* pojava hero teksta: jedan orkestriran trenutak */
