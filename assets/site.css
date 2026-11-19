@@ -495,3 +495,8 @@ p { margin: 0; max-width: 62ch; }
 .dron-hud .rec { width: 7px; height: 7px; border-radius: 50%; background: var(--novo); animation: rec 1.2s steps(2, jump-none) infinite; }
 .dron-hud.gotovo .rec { background: var(--pijesak); animation: none; }
 @keyframes rec { 50% { opacity: .2; } }
+
+/* PROBA: hero sa placem i dronom — zatamnjenje ispod teksta */
+html.hero-plac .hero::before { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: linear-gradient(90deg, rgba(9, 17, 23, .82) 0%, rgba(9, 17, 23, .45) 38%, rgba(9, 17, 23, 0) 62%), linear-gradient(to top, rgba(9, 17, 23, .9) 0%, rgba(9, 17, 23, 0) 42%), linear-gradient(to bottom, rgba(9, 17, 23, .7) 0%, rgba(9, 17, 23, 0) 18%); }
+@media (max-width: 900px) { html.hero-plac .hero::before { background: linear-gradient(to bottom, rgba(9, 17, 23, .75) 0%, rgba(9, 17, 23, 0) 22%); } }
