@@ -465,7 +465,8 @@
       var r = boja[0] * sum * redovi, g = boja[1] * sum * redovi, b = boja[2] * sum * redovi;
       if (n.rub < 0.035) { r *= 0.62; g *= 0.72; b *= 0.6; } // međe njiva (živica)
       var d = dalj(x, z);
-      if (unutra(x, z) || d < 1.2) { var s2 = 0.9 + 0.2 * fbm(x * 0.4, z * 0.4); r = 0.30 * s2; g = 0.52 * s2; b = 0.18 * s2; } // pokošena trava na placu
+      if (unutra(x, z) || d < 1.2) { var s2 = (0.92 + 0.16 * fbm(x * 0.4, z * 0.4)) * (Math.floor((x + 40) / 3.2) % 2 ? 1.1 : 0.9); r = 0.34 * s2; g = 0.56 * s2; b = 0.2 * s2; } // pokošena trava na placu, u prugama
+      var dpr = Math.abs(x - 6 - (z - 20) * 0.1); if (z > 18 && z < PUT_Z && dpr < 1.6) { var p0 = 0.42 + 0.05 * fbm(x * 0.6, z * 0.6); r = p0; g = p0 * 0.93; b = p0 * 0.8; } // prilaz od puta
       var dp = Math.abs(z - PUT_Z - Math.sin(x * 0.02) * 6);
       if (dp < 3.2) { var p = 0.38 + 0.06 * fbm(x * 0.5, z * 0.5); r = p; g = p * 0.95; b = p * 0.85; } // makadam
       else if (dp < 4.2) { r *= 0.8; g *= 0.85; b *= 0.75; }
@@ -473,7 +474,13 @@
     }
     tg.setAttribute("color", new THREE.BufferAttribute(tb, 3));
     tg.computeVertexNormals();
-    var teren = new THREE.Mesh(tg, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.96, metalness: 0 }));
+    var travaTex = (function () {
+      var c = document.createElement("canvas"); c.width = c.height = 256; var g = c.getContext("2d");
+      g.fillStyle = "#b9b9b9"; g.fillRect(0, 0, 256, 256);
+      for (var k = 0; k < 9000; k++) { var l = 120 + Math.floor(rnd() * 135); g.fillStyle = "rgb(" + l + "," + l + "," + l + ")"; var x = rnd() * 256, y = rnd() * 256; g.fillRect(x, y, 1 + rnd() * 1.5, 2 + rnd() * 4); }
+      var tx = new THREE.CanvasTexture(c); tx.wrapS = tx.wrapT = THREE.RepeatWrapping; tx.repeat.set(140, 140); tx.anisotropy = 8; tx.encoding = THREE.sRGBEncoding; return tx;
+    })();
+    var teren = new THREE.Mesh(tg, new THREE.MeshStandardMaterial({ vertexColors: true, map: travaTex, roughness: 0.97, metalness: 0 }));
     teren.receiveShadow = sjene;
     scena.add(teren);
 
@@ -511,6 +518,7 @@
       sunce.shadow.bias = -0.0008; sunce.shadow.radius = 4;
     }
     scena.add(sunce);
+    var kontra = new THREE.DirectionalLight(0xbcd3ff, 0.55); kontra.position.set(90, 60, -120); scena.add(kontra);
 
     // plac: prozirna zlatna površina sa mrežom, skeniranjem i otiskom kamere
     var minX = -24, maxX = 26, minZ = -19, maxZ = 20;
@@ -536,7 +544,7 @@
         " vec2 g = abs(fract(p/5.0)-0.5); float mreza = 1.0 - smoothstep(0.0, 0.06, min(g.x,g.y));",
         " float otisak = (1.0-smoothstep(4.5,5.5,abs(p.x-uDX))) * (1.0-smoothstep(3.5,4.5,abs(p.y-uDZ))) * uSken;",
         " vec3 zlato = vec3(0.86,0.70,0.42);",
-        " float a = 0.07 + snim*0.10 + mreza*(0.06+snim*0.22) + otisak*0.28;",
+        " float a = 0.03 + snim*0.09 + mreza*(0.02+snim*0.26) + otisak*0.26;",
         " gl_FragColor = vec4(mix(zlato, vec3(1.0,0.95,0.8), otisak), a); }"].join("\n")
     });
     scena.add(new THREE.Mesh(pg, placMat));
@@ -555,11 +563,21 @@
     var prsteni = [];
     PLAC.forEach(function (t) {
       var y0 = visina(t[0], t[1]);
-      var k = new THREE.Mesh(new THREE.BoxGeometry(0.7, 1.1, 0.7), kamMat); k.position.set(t[0], y0 + 0.45, t[1]); k.castShadow = sjene; scena.add(k);
-      var v = new THREE.Mesh(new THREE.BoxGeometry(0.72, 0.18, 0.72), crvMat); v.position.set(t[0], y0 + 1.0, t[1]); scena.add(v);
+      var k = new THREE.Mesh(new THREE.BoxGeometry(0.28, 1.3, 0.28), new THREE.MeshStandardMaterial({ color: 0x9a7650, roughness: 0.9 })); k.position.set(t[0], y0 + 0.6, t[1]); k.castShadow = sjene; scena.add(k);
+      var v = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.3, 0.3), crvMat); v.position.set(t[0], y0 + 1.25, t[1]); scena.add(v);
       var pr2 = new THREE.Mesh(new THREE.RingGeometry(1.4, 1.65, 40), new THREE.MeshBasicMaterial({ color: 0xe9c98c, transparent: true, opacity: 0.8, side: THREE.DoubleSide, depthWrite: false }));
       pr2.rotation.x = -Math.PI / 2; pr2.position.set(t[0], y0 + 0.2, t[1]); scena.add(pr2); prsteni.push(pr2);
     });
+
+    // GNSS prijemnik na štapu (rover) kod jedne međe
+    (function () {
+      var rx = PLAC[1][0] - 1.6, rz = PLAC[1][1] + 1.2, ry = visina(rx, rz);
+      var bijeM = new THREE.MeshStandardMaterial({ color: 0xe8e6e0, roughness: 0.5 }), zutM = new THREE.MeshStandardMaterial({ color: 0xd8a93a, roughness: 0.5 });
+      for (var sgm = 0; sgm < 4; sgm++) { var st = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 0.5, 8), sgm % 2 ? zutM : bijeM); st.position.set(rx, ry + 0.25 + sgm * 0.5, rz); st.castShadow = sjene; scena.add(st); }
+      var pr = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.42, 0.26, 24), new THREE.MeshStandardMaterial({ color: 0xd9dcdf, roughness: 0.4 })); pr.position.set(rx, ry + 2.15, rz); pr.castShadow = sjene; scena.add(pr);
+      var kontr = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.45, 0.08), new THREE.MeshStandardMaterial({ color: 0x23282c, roughness: 0.5 })); kontr.position.set(rx + 0.1, ry + 1.35, rz - 0.12); scena.add(kontr);
+      [0, 2.1, 4.2].forEach(function (u) { var n = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 1.5, 6), zutM); n.position.set(rx + Math.cos(u) * 0.35, ry + 0.65, rz + Math.sin(u) * 0.35); n.rotation.set(Math.sin(u) * 0.45, 0, -Math.cos(u) * 0.45); scena.add(n); });
+    })();
 
     // natpisi: dužine strana i površina (sprite sa platnom)
     var natpis = function (tekst, x, y, z, vel, istaknut) {
@@ -584,38 +602,71 @@
     povrsina = Math.abs(povrsina) / 2 * 1.0275;
     var pNatpis = natpis("P = " + Math.round(povrsina).toLocaleString("de-DE") + " m²", 1, visina(1, 1) + 2.2, 2, 2.3, true);
 
-    // dron: originalni geodetski kvadrokopter
+    // dron: originalni geodetski kvadrokopter (detaljniji model)
     var dron = new THREE.Group();
-    var tijM = new THREE.MeshStandardMaterial({ color: 0x3a4148, roughness: 0.42, metalness: 0.35 });
-    var tamM = new THREE.MeshStandardMaterial({ color: 0x1c2126, roughness: 0.5, metalness: 0.4 });
-    var svM = new THREE.MeshStandardMaterial({ color: 0xc9ced3, roughness: 0.35, metalness: 0.2 });
-    var dio = function (geo, mat, x, y, z) { var m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); m.castShadow = sjene; dron.add(m); return m; };
-    dio(new THREE.BoxGeometry(2.4, 0.75, 3.4), tijM, 0, 0, 0);
-    var nos = dio(new THREE.SphereGeometry(1.0, 20, 14), tijM, 0, 0, -1.55); nos.scale.set(1.15, 0.42, 0.75);
-    dio(new THREE.BoxGeometry(1.9, 0.18, 2.6), tamM, 0, 0.45, 0.1);
-    dio(new THREE.CylinderGeometry(0.95, 1.05, 0.38, 28), svM, 0, 0.75, 0.35); // GNSS antena
-    dio(new THREE.CylinderGeometry(0.08, 0.08, 0.35, 8), tamM, 0, 0.55, 0.35);
-    var elise = [];
-    [[-1, -1], [1, -1], [-1, 1], [1, 1]].forEach(function (sm) {
-      var kx = sm[0] * 3.1, kz = sm[1] * 2.9;
-      var ruka = dio(new THREE.CylinderGeometry(0.16, 0.2, Math.sqrt(kx * kx + kz * kz) - 1, 10), tamM, kx / 2, 0.05, kz / 2);
-      ruka.rotation.z = Math.PI / 2; ruka.rotation.y = -Math.atan2(kz, kx);
-      dio(new THREE.CylinderGeometry(0.42, 0.42, 0.55, 18), tamM, kx, 0.2, kz);
-      var el = new THREE.Group(); el.position.set(kx, 0.55, kz);
-      var kr = new THREE.Mesh(new THREE.BoxGeometry(3.6, 0.04, 0.28), tamM); el.add(kr);
-      var disk = new THREE.Mesh(new THREE.CircleGeometry(1.85, 32), new THREE.MeshBasicMaterial({ color: 0xcfd6dc, transparent: true, opacity: 0.09, depthWrite: false, side: THREE.DoubleSide }));
-      disk.rotation.x = -Math.PI / 2; el.add(disk);
-      dron.add(el); elise.push(kr);
-      dio(new THREE.CylinderGeometry(0.06, 0.06, 1.1, 6), tamM, kx * 0.55, -0.7, kz * 0.55); // nogari
+    var tijM = new THREE.MeshStandardMaterial({ color: 0x2f353b, roughness: 0.5, metalness: 0.25 });
+    var tamM = new THREE.MeshStandardMaterial({ color: 0x1b1f23, roughness: 0.55, metalness: 0.3 });
+    var karbonM = new THREE.MeshStandardMaterial({ color: 0x15181b, roughness: 0.35, metalness: 0.2 });
+    var metM = new THREE.MeshStandardMaterial({ color: 0x8b939b, roughness: 0.3, metalness: 0.9 });
+    var svM = new THREE.MeshStandardMaterial({ color: 0xdfe3e6, roughness: 0.4, metalness: 0.05 });
+    var stakloM = new THREE.MeshStandardMaterial({ color: 0x0b1622, roughness: 0.08, metalness: 0.6, emissive: 0x0a1a2a });
+    var dio = function (geo, mat, x, y, z, rod) { var m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); m.castShadow = sjene; (rod || dron).add(m); return m; };
+    // zaobljeno tijelo (izvučen zaobljeni pravougaonik sa zakošenim ivicama)
+    var zaobljen = function (w, d, r) { var s = new THREE.Shape(), x = -w / 2, y = -d / 2;
+      s.moveTo(x + r, y); s.lineTo(x + w - r, y); s.quadraticCurveTo(x + w, y, x + w, y + r); s.lineTo(x + w, y + d - r); s.quadraticCurveTo(x + w, y + d, x + w - r, y + d);
+      s.lineTo(x + r, y + d); s.quadraticCurveTo(x, y + d, x, y + d - r); s.lineTo(x, y + r); s.quadraticCurveTo(x, y, x + r, y); return s; };
+    var tijG = new THREE.ExtrudeGeometry(zaobljen(2.3, 3.6, 0.75), { depth: 0.55, bevelEnabled: true, bevelThickness: 0.22, bevelSize: 0.22, bevelSegments: 5, curveSegments: 10 });
+    tijG.rotateX(-Math.PI / 2); tijG.translate(0, -0.3, 0);
+    dio(tijG, tijM, 0, 0, 0);
+    var donjiG = new THREE.ExtrudeGeometry(zaobljen(2.0, 3.2, 0.6), { depth: 0.25, bevelEnabled: true, bevelThickness: 0.1, bevelSize: 0.1, bevelSegments: 3 });
+    donjiG.rotateX(-Math.PI / 2); dio(donjiG, tamM, 0, -0.62, 0);
+    // ventilacioni prorezi na vrhu
+    for (var vi = 0; vi < 5; vi++) dio(new THREE.BoxGeometry(1.1, 0.04, 0.07), tamM, 0, 0.49, 0.85 + vi * 0.18);
+    // GNSS antena (RTK) na stubiću
+    dio(new THREE.CylinderGeometry(0.12, 0.14, 0.32, 10), tamM, 0, 0.62, 0.05);
+    dio(new THREE.CylinderGeometry(0.88, 0.95, 0.24, 36), svM, 0, 0.86, 0.05);
+    var kapa = dio(new THREE.SphereGeometry(0.88, 36, 10, 0, Math.PI * 2, 0, Math.PI / 2), svM, 0, 0.98, 0.05); kapa.scale.y = 0.28;
+    var bljesak = dio(new THREE.SphereGeometry(0.09, 8, 6), new THREE.MeshBasicMaterial({ color: 0xffffff }), 0, 0.52, 1.35);
+    // ruke, motori, elise
+    var elise = [], navSvjetla = [];
+    var diskTex = (function () { var c = document.createElement("canvas"); c.width = c.height = 128; var g = c.getContext("2d");
+      var gr = g.createRadialGradient(64, 64, 6, 64, 64, 63); gr.addColorStop(0, "rgba(220,226,232,0)"); gr.addColorStop(0.25, "rgba(220,226,232,.10)"); gr.addColorStop(0.85, "rgba(220,226,232,.20)"); gr.addColorStop(1, "rgba(220,226,232,0)");
+      g.fillStyle = gr; g.fillRect(0, 0, 128, 128); return new THREE.CanvasTexture(c); })();
+    var lopataS = new THREE.Shape(); lopataS.moveTo(0, -0.1); lopataS.bezierCurveTo(0.6, -0.22, 1.4, -0.2, 1.95, -0.06); lopataS.bezierCurveTo(2.0, 0, 2.0, 0.05, 1.9, 0.08); lopataS.bezierCurveTo(1.3, 0.14, 0.6, 0.16, 0, 0.1); lopataS.lineTo(0, -0.1);
+    var lopataG = new THREE.ExtrudeGeometry(lopataS, { depth: 0.03, bevelEnabled: false }); lopataG.rotateX(-Math.PI / 2);
+    [[-1, -1], [1, -1], [-1, 1], [1, 1]].forEach(function (sm, k) {
+      var kx = sm[0] * 3.15, kz = sm[1] * 2.75, duz = Math.sqrt(kx * kx + kz * kz);
+      var ruka = dio(new THREE.CylinderGeometry(0.14, 0.24, duz - 0.9, 14), tamM, kx * 0.53, 0.0, kz * 0.53);
+      ruka.rotation.z = Math.PI / 2; ruka.rotation.y = -Math.atan2(kz, kx); ruka.rotateZ(-0.04);
+      var motor = new THREE.Group(); motor.position.set(kx, 0.08, kz); dron.add(motor);
+      dio(new THREE.CylinderGeometry(0.42, 0.48, 0.5, 24), tamM, 0, 0, 0, motor);
+      for (var fi = 0; fi < 3; fi++) dio(new THREE.TorusGeometry(0.475, 0.012, 4, 24), tamM, 0, -0.12 + fi * 0.12, 0, motor).rotation.x = Math.PI / 2;
+      dio(new THREE.CylinderGeometry(0.2, 0.2, 0.18, 16), metM, 0, 0.32, 0, motor);
+      var el = new THREE.Group(); el.position.set(0, 0.42, 0); motor.add(el);
+      for (var li = 0; li < 2; li++) { var lp = new THREE.Mesh(lopataG, karbonM); lp.rotation.y = li * Math.PI; lp.rotation.x = 0.12 * (li ? -1 : 1); el.add(lp); }
+      var disk = new THREE.Mesh(new THREE.CircleGeometry(2.0, 40), new THREE.MeshBasicMaterial({ map: diskTex, transparent: true, depthWrite: false, side: THREE.DoubleSide }));
+      disk.rotation.x = -Math.PI / 2; disk.position.y = 0.02; el.add(disk);
+      elise.push(el);
+      // navigaciona svjetla na krajevima ruku: naprijed zeleno, nazad crveno
+      var nav = dio(new THREE.SphereGeometry(0.1, 8, 6), new THREE.MeshBasicMaterial({ color: sm[1] < 0 ? 0x5dff9a : 0xff4a3d }), 0, -0.3, 0, motor); navSvjetla.push(nav);
     });
-    dio(new THREE.BoxGeometry(5.0, 0.08, 0.12), tamM, 0, -1.25, -1.6);
-    dio(new THREE.BoxGeometry(5.0, 0.08, 0.12), tamM, 0, -1.25, 1.6);
-    var gimbal = new THREE.Group(); gimbal.position.set(0, -0.6, -1.4); dron.add(gimbal);
-    var kuc = new THREE.Mesh(new THREE.BoxGeometry(1.1, 0.95, 1.0), tamM); gimbal.add(kuc);
-    var sociv = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.32, 0.2, 20), new THREE.MeshStandardMaterial({ color: 0x0a0f14, roughness: 0.08, metalness: 0.9 }));
-    sociv.rotation.x = Math.PI / 2; sociv.position.set(0, -0.05, -0.55); gimbal.add(sociv);
-    var ledP = dio(new THREE.SphereGeometry(0.12, 8, 6), new THREE.MeshBasicMaterial({ color: 0x5dff9a }), 0, 0.05, -2.3);
-    var ledZ = dio(new THREE.SphereGeometry(0.12, 8, 6), new THREE.MeshBasicMaterial({ color: 0xff4a3d }), 0, 0.1, 1.75);
+    // nogari u obliku slova T
+    [-1, 1].forEach(function (sx) {
+      var n1 = dio(new THREE.CylinderGeometry(0.07, 0.09, 1.5, 8), tamM, sx * 1.05, -1.25, -0.9); n1.rotation.z = sx * 0.28;
+      var n2 = dio(new THREE.CylinderGeometry(0.07, 0.09, 1.5, 8), tamM, sx * 1.05, -1.25, 0.9); n2.rotation.z = sx * 0.28;
+      var sk = dio(new THREE.CylinderGeometry(0.09, 0.09, 3.2, 10), tamM, sx * 1.3, -1.95, 0); sk.rotation.x = Math.PI / 2;
+    });
+    // gimbal sa tri senzora
+    var gimbal = new THREE.Group(); gimbal.position.set(0, -0.85, -1.55); gimbal.scale.setScalar(1.25); dron.add(gimbal);
+    dio(new THREE.CylinderGeometry(0.12, 0.12, 0.35, 10), metM, 0, 0.25, 0, gimbal);
+    var vil = dio(new THREE.BoxGeometry(1.25, 0.1, 0.4), tamM, 0, 0.05, 0, gimbal);
+    var kuc = dio(new THREE.SphereGeometry(0.62, 24, 18), tijM, 0, -0.45, 0, gimbal); kuc.scale.set(1.05, 0.9, 0.95);
+    dio(new THREE.CircleGeometry(0.42, 28), tamM, 0, -0.45, -0.6, gimbal).rotation.y = Math.PI;
+    [[-0.18, -0.36, 0.15], [0.18, -0.36, 0.11], [0, -0.6, 0.09]].forEach(function (s) {
+      var obod = dio(new THREE.CylinderGeometry(s[2] + 0.04, s[2] + 0.04, 0.08, 20), metM, s[0], s[1], -0.62, gimbal); obod.rotation.x = Math.PI / 2;
+      var st = dio(new THREE.SphereGeometry(s[2], 20, 12, 0, Math.PI * 2, 0, Math.PI / 2), stakloM, s[0], s[1], -0.65, gimbal); st.rotation.x = -Math.PI / 2; st.scale.y = 0.45;
+    });
+    var ledP = navSvjetla[0], ledZ = navSvjetla[2];
     dron.scale.setScalar(mobilni ? 1.95 : 1.45);
     scena.add(dron);
 
@@ -673,8 +724,9 @@
       dron.rotation.set(-0.06 * st.nagib, -Math.PI / 2 * st.smjer + Math.PI, 0);
       dron.rotation.z = 0; dron.rotation.x = 0;
       dron.rotateX(-0.05 * st.nagib);
-      elise.forEach(function (e, k) { e.rotation.y = t * 38 * (k % 2 ? 1 : -1); });
-      ledP.visible = Math.floor(t * 2) % 2 === 0; ledZ.visible = !ledP.visible;
+      elise.forEach(function (e, k) { e.rotation.y = t * 9.3 * (k % 2 ? 1 : -1); });
+      bljesak.visible = (t % 1.4) < 0.08 || ((t - 0.18) % 1.4 >= 0 && (t - 0.18) % 1.4 < 0.06);
+      ledP.visible = ledZ.visible = true;
       uniP.uDX.value = dx2; uniP.uDZ.value = dz2; uniP.uRed.value = st.red; uniP.uSmjer.value = st.smjer; uniP.uSken.value = st.sken;
       postaviSnop(dx2, dy - 1.0, dz2, dx2, dz2, st.sken > 0);
       prsteni.forEach(function (p3, k) { var s3 = 1 + 0.25 * Math.sin(t * 2.4 + k); p3.scale.set(s3, s3, s3); p3.material.opacity = 0.9 - 0.5 * (s3 - 0.75); });
@@ -688,6 +740,7 @@
       pomak.set(cilj.x + Math.sin(ug) * R, cilj.y + (siroko ? 66 : 105) - mis.y * 8, cilj.z + Math.cos(ug) * R);
       kamera.position.lerp(pomak, t < 0.1 ? 1 : 0.06);
       kamera.lookAt(cilj);
+      if (location.hash === "#dron-izbliza") { kamera.clearViewOffset(); kamera.position.set(dx2 + 15, dy + 6, dz2 - 13); kamera.lookAt(dx2, dy - 1, dz2); }
       renderer.render(scena, kamera);
       if (sad - zadnje > 160 && st.sken) {
         zadnje = sad; brT = (brT % 9999) + 1;
@@ -712,7 +765,7 @@
     var gpu = infoGPU();
     dijag.webgl = gpu === null ? "ne" : "da"; dijag.gpu = gpu || "-";
     var softver = !!gpu && /swiftshader|llvmpipe|softpipe|software|basic render/i.test(gpu);
-    var dozvoliSoft = location.hash === "#dijag";
+    var dozvoliSoft = location.hash === "#dijag" || location.hash === "#dron-izbliza";
     if (gpu === null || !window.THREE) { oblak2D(false); return; }
     if ((!softver || dozvoliSoft) && webglPlac()) { document.documentElement.classList.add("hero-plac"); return; }
     if (!webglOblak(softver)) oblak2D(false);
