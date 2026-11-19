@@ -392,7 +392,7 @@
     return true;
   };
 
-  /* ---------- PROBA: hero sa zelenim terenom, placem i 3D geodetskim dronom ---------- */
+  /* ---------- hero: zeleni teren, plac sa međama i 3D geodetski dron (slabiji uređaji: oblak tačaka) ---------- */
   var webglPlac = function () {
     var THREE = window.THREE;
     var renderer;
@@ -740,7 +740,6 @@
       pomak.set(cilj.x + Math.sin(ug) * R, cilj.y + (siroko ? 66 : 105) - mis.y * 8, cilj.z + Math.cos(ug) * R);
       kamera.position.lerp(pomak, t < 0.1 ? 1 : 0.06);
       kamera.lookAt(cilj);
-      if (location.hash === "#dron-izbliza") { kamera.clearViewOffset(); kamera.position.set(dx2 + 15, dy + 6, dz2 - 13); kamera.lookAt(dx2, dy - 1, dz2); }
       renderer.render(scena, kamera);
       if (sad - zadnje > 160 && st.sken) {
         zadnje = sad; brT = (brT % 9999) + 1;
@@ -765,7 +764,7 @@
     var gpu = infoGPU();
     dijag.webgl = gpu === null ? "ne" : "da"; dijag.gpu = gpu || "-";
     var softver = !!gpu && /swiftshader|llvmpipe|softpipe|software|basic render/i.test(gpu);
-    var dozvoliSoft = location.hash === "#dijag" || location.hash === "#dron-izbliza";
+    var dozvoliSoft = location.hash === "#dijag";
     if (gpu === null || !window.THREE) { oblak2D(false); return; }
     if ((!softver || dozvoliSoft) && webglPlac()) { document.documentElement.classList.add("hero-plac"); return; }
     if (!webglOblak(softver)) oblak2D(false);
